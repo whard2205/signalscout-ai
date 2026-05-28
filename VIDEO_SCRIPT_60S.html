@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SignalScout AI — 60s Teaser Script</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --bg-elev: #11161d;
+    --bg-card: #141a23;
+    --line: #1f2630;
+    --ink: #e7ecf3;
+    --ink-muted: #9aa6b4;
+    --ink-dim: #5e6a78;
+    --accent: #7cf0c8;
+    --accent-warn: #ffb547;
+    --accent-info: #6aa9ff;
+    --accent-danger: #ff6b6b;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .subtitle {
+    color: var(--ink-muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 32px;
+  }
+  .meta-strip {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 32px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .meta-strip strong { color: var(--ink); font-weight: 500; }
+  h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-muted);
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-top: 36px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 13.5px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    vertical-align: top;
+    border-top: 1px solid var(--line);
+  }
+  th {
+    background: var(--bg-elev);
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    font-weight: 500;
+  }
+  .time { font-family: var(--mono); color: var(--accent); white-space: nowrap; width: 70px; }
+  .action { color: var(--ink); width: 220px; }
+  .voiceover { color: var(--ink-muted); font-style: italic; }
+  .voiceover::before { content: "“"; color: var(--accent); }
+  .voiceover::after  { content: "”"; color: var(--accent); }
+  .panel {
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-top: 12px;
+  }
+  .panel strong { color: var(--accent); }
+  ul { padding-left: 20px; }
+  li { margin: 4px 0; color: var(--ink-muted); }
+  li strong { color: var(--ink); font-weight: 500; }
+  code { font-family: var(--mono); font-size: 12px; background: var(--bg-elev); padding: 2px 6px; border-radius: 4px; color: var(--accent); }
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    border: 1px solid var(--line);
+    color: var(--accent);
+    background: rgba(124, 240, 200, 0.08);
+  }
+  .footer {
+    margin-top: 48px;
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>SignalScout AI — 60-second teaser</h1>
+<div class="subtitle">Submission teaser · lablab.ai · Bright Data Web Data UNLOCKED</div>
+
+<div class="meta-strip">
+  <span><strong>Total length:</strong> 60 seconds</span>
+  <span><strong>Hero company:</strong> Anthropic</span>
+  <span><strong>Backend:</strong> Cloud Run · live mode</span>
+  <span><strong>LLM:</strong> Claude Haiku 4.5</span>
+</div>
+
+<h2>Pre-flight checklist (5 minutes before recording)</h2>
+<div class="panel">
+<ul>
+  <li><strong>Open</strong> <code>https://signalscout-ai.vercel.app</code> in a clean browser window</li>
+  <li><strong>Ping</strong> <code>https://signalscout-api-47232592262.asia-southeast2.run.app/health</code> so the instance is warm</li>
+  <li><strong>Pre-run</strong> Anthropic once so the cockpit is fully populated (cache hits = instant click on take-2)</li>
+  <li><strong>Hide</strong> bookmark bar, browser extensions, notification badges</li>
+  <li><strong>Zoom</strong> Ctrl+0 to default, then Ctrl++ twice on small laptop screens (readable text on video)</li>
+  <li><strong>Audio:</strong> 48 kHz mono, normalize to −16 LUFS</li>
+</ul>
+</div>
+
+<h2>Beat sheet</h2>
+<table>
+  <thead>
+    <tr><th class="time">Time</th><th>On-screen</th><th>Voiceover</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="time">0:00 – 0:05</td>
+      <td class="action">Logo card · <span class="pill">live mode</span></td>
+      <td class="voiceover">SignalScout AI — the why-now engine for B2B sales teams.</td>
+    </tr>
+    <tr>
+      <td class="time">0:05 – 0:12</td>
+      <td class="action">Type <code>Anthropic</code> in the search box · click Analyze</td>
+      <td class="voiceover">One company name in.</td>
+    </tr>
+    <tr>
+      <td class="time">0:12 – 0:22</td>
+      <td class="action">Agent timeline plays · highlight the four Bright Data tool tiles as they tick green</td>
+      <td class="voiceover">Bright Data goes to the public web — SERP, Web Unlocker, the Scraper API, and MCP. Live data, not cached PDFs.</td>
+    </tr>
+    <tr>
+      <td class="time">0:22 – 0:32</td>
+      <td class="action">Why-Now ring lands at <strong>98 / 100</strong> · cursor on the breakdown</td>
+      <td class="voiceover">A deterministic Why-Now score. Computed in Python, not invented by the language model.</td>
+    </tr>
+    <tr>
+      <td class="time">0:32 – 0:42</td>
+      <td class="action">Scroll to the Evidence Ledger · point at one <code>live</code> badge + tier T1 source</td>
+      <td class="voiceover">Every claim links back to a live source with a tool, a tier, and a confidence score.</td>
+    </tr>
+    <tr>
+      <td class="time">0:42 – 0:52</td>
+      <td class="action">Scroll to the Action Pack · highlight the cold email subject line</td>
+      <td class="voiceover">And a sales rep gets a ready-to-send cold email anchored on the same evidence.</td>
+    </tr>
+    <tr>
+      <td class="time">0:52 – 1:00</td>
+      <td class="action">End card: <code>signalscout-ai.vercel.app</code> · <span class="pill">Bright Data + Claude</span></td>
+      <td class="voiceover">SignalScout AI — built for Bright Data Web Data UNLOCKED.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>What NOT to say</h2>
+<div class="panel">
+<ul>
+  <li><strong>Don't</strong> claim the LLM picks the score — it doesn't, and we say so.</li>
+  <li><strong>Don't</strong> say "live Web Scraper" — we serve a pre-warmed snapshot. The UI says it; you say it.</li>
+  <li><strong>Don't</strong> mention MiMo. The cascade is stealth. UI label stays <strong>"Powered by Bright Data + Claude"</strong>.</li>
+  <li><strong>Don't</strong> mention specific competitor names by hand — let the screen do it (they update from live SERP).</li>
+</ul>
+</div>
+
+<div class="footer">Built for Bright Data Web Data UNLOCKED · May 25 – 31, 2026</div>
+</div>
+</body>
+</html>

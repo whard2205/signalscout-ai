@@ -197,36 +197,6 @@ If mode is `demo`, all summaries are labeled `[DEMO]` so judges can tell.
 
 ---
 
-## 3-minute demo script
-
-### Recommended hero company
-
-Pick a company that has **fresh** SERP evidence AND a pre-warmed Web Scraper
-snapshot. Recommended ordering:
-
-1. **Anthropic** (default hero) — Claude's own company, recent Series G news,
-   active LinkedIn snapshot, real AI competitors. Strongest "why now" story.
-2. **Walmart** — richest LinkedIn snapshot (11 roles), Open Call program is
-   the timing event.
-3. **Affirm** — recent product launch + fresh revenue signals.
-
-Avoid hero companies whose top SERP evidence is consistently older than 6
-months — that weakens the "why NOW" claim regardless of other signals.
-
-| Time  | Action |
-|-------|--------|
-| 0:00  | Frame: *"AI can't sell if it doesn't know who to sell to right now."* |
-| 0:20  | Type `Anthropic`. Click Run. |
-| 0:30  | Point to agent pipeline — each step is a Bright Data tool. |
-| 0:50  | Why-Now score. Point to score breakdown: *"deterministic, not LLM."* |
-| 1:10  | Scroll to Evidence Ledger. *"Every claim → source + tool + confidence."* |
-| 1:30  | Show a `live` badge row. *"That's real data, just pulled."* |
-| 2:00  | Copy cold email. *"Sales rep gets this in their inbox Monday morning."* |
-| 2:20  | Open Bright Data Infrastructure panel — walk through SERP API (live), Web Unlocker (live), Web Scraper (pre-warmed snapshot), MCP. |
-| 2:45  | Close: *"Real enterprise pain. Real Bright Data stack. Evidence-first AI."* |
-
----
-
 ## Limitations
 
 - Web Scraper API is **not triggered synchronously** in `/analyze`. It serves

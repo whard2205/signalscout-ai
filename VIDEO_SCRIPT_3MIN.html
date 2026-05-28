@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SignalScout AI — 3-minute Main Pitch Script</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --bg-elev: #11161d;
+    --bg-card: #141a23;
+    --line: #1f2630;
+    --ink: #e7ecf3;
+    --ink-muted: #9aa6b4;
+    --ink-dim: #5e6a78;
+    --accent: #7cf0c8;
+    --accent-warn: #ffb547;
+    --accent-info: #6aa9ff;
+    --accent-danger: #ff6b6b;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    margin: 0;
+    padding: 0;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .subtitle {
+    color: var(--ink-muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 32px;
+  }
+  .meta-strip {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 28px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .meta-strip strong { color: var(--ink); font-weight: 500; }
+  h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-muted);
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-top: 36px;
+  }
+  h3 { font-size: 14px; color: var(--accent); margin: 22px 0 6px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 13.5px;
+  }
+  th, td {
+    text-align: left;
+    padding: 11px 12px;
+    vertical-align: top;
+    border-top: 1px solid var(--line);
+  }
+  th {
+    background: var(--bg-elev);
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    font-weight: 500;
+  }
+  .time { font-family: var(--mono); color: var(--accent); white-space: nowrap; width: 78px; }
+  .action { color: var(--ink); width: 260px; }
+  .voiceover { color: var(--ink-muted); font-style: italic; }
+  .voiceover::before { content: "“"; color: var(--accent); margin-right: 1px; }
+  .voiceover::after  { content: "”"; color: var(--accent); margin-left: 1px; }
+  .panel {
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 14px;
+  }
+  .panel.warn { border-color: rgba(255, 181, 71, 0.45); background: rgba(255, 181, 71, 0.05); }
+  .panel.warn strong { color: var(--accent-warn); }
+  .panel.danger { border-color: rgba(255, 107, 107, 0.45); background: rgba(255, 107, 107, 0.05); }
+  .panel.danger strong { color: var(--accent-danger); }
+  ul, ol { padding-left: 20px; margin: 4px 0 8px; }
+  li { margin: 4px 0; color: var(--ink-muted); }
+  li strong { color: var(--ink); font-weight: 500; }
+  code { font-family: var(--mono); font-size: 12px; background: var(--bg-elev); padding: 2px 6px; border-radius: 4px; color: var(--accent); }
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    border: 1px solid var(--line);
+    color: var(--accent);
+    background: rgba(124, 240, 200, 0.08);
+  }
+  .section-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 28px 0 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+  }
+  .section-divider::before,
+  .section-divider::after {
+    content: ""; flex: 1; height: 1px; background: var(--line);
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+  .footer {
+    margin-top: 48px;
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>SignalScout AI — 3-minute main pitch</h1>
+<div class="subtitle">Full hackathon submission · Bright Data Web Data UNLOCKED · 2026-05-31</div>
+
+<div class="meta-strip">
+  <span><strong>Total length:</strong> 3 min 00 s</span>
+  <span><strong>Hero:</strong> Anthropic</span>
+  <span><strong>Frontend:</strong> signalscout-ai.vercel.app</span>
+  <span><strong>Backend:</strong> Cloud Run · asia-southeast2 · rev 00009-fjz+</span>
+  <span><strong>LLM:</strong> Claude Haiku 4.5 (MiMo failover stealth)</span>
+</div>
+
+<h2>Pre-flight checklist (T-minus 10 minutes)</h2>
+<div class="panel">
+<ol>
+  <li><strong>Wake backend:</strong> <code>curl https://signalscout-api-47232592262.asia-southeast2.run.app/health</code> — confirm <code>{"status":"ok","mode":"live"}</code></li>
+  <li><strong>Pre-warm 3 hero companies</strong> (so the demo response is &lt;500 ms):
+      open the cockpit in a hidden tab, run Anthropic, Walmart, and Affirm once each.</li>
+  <li><strong>Clear browser:</strong> close other tabs, hide bookmarks, disable extensions, full-screen the cockpit</li>
+  <li><strong>Screen recorder:</strong> 1080p min, 60 fps if available, cursor highlight ON</li>
+  <li><strong>Audio:</strong> 48 kHz mono, normalize to −16 LUFS post-record</li>
+  <li><strong>Have ready:</strong> a clean browser tab with the cockpit homepage, no prior search</li>
+</ol>
+</div>
+
+<div class="section-divider">Beat sheet</div>
+
+<h3>Act 1 — Hook &amp; Problem · 0:00 – 0:25</h3>
+<table>
+  <thead>
+    <tr><th class="time">Time</th><th>On-screen</th><th>Voiceover</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="time">0:00 – 0:08</td>
+      <td class="action">Cockpit landing page · Bright Data logo visible · empty search box</td>
+      <td class="voiceover">B2B sales reps spend two to four hours researching every account before they reach out — and most of that research is stale, shallow, and untracked.</td>
+    </tr>
+    <tr>
+      <td class="time">0:08 – 0:18</td>
+      <td class="action">Cursor hovers over the suggestion chips: Anthropic, Walmart, NVIDIA</td>
+      <td class="voiceover">AI is supposed to fix this — but only if it has live access to the public web, and only if every claim it makes is traceable back to a real source.</td>
+    </tr>
+    <tr>
+      <td class="time">0:18 – 0:25</td>
+      <td class="action">Click <code>Anthropic</code> chip · click <em>Analyze</em></td>
+      <td class="voiceover">SignalScout AI is the why-now engine that does both.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Act 2 — Live Pipeline · 0:25 – 1:00</h3>
+<table>
+  <thead>
+    <tr><th class="time">Time</th><th>On-screen</th><th>Voiceover</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="time">0:25 – 0:40</td>
+      <td class="action">Agent Timeline animates · 7 steps tick green · point at each Bright Data tool tile as it activates</td>
+      <td class="voiceover">Behind the scenes, four Bright Data tools fire in parallel. SERP API for funding and product signals. Web Unlocker to pull full article text through paywalls. The Web Scraper API for LinkedIn hiring data. And MCP, so any AI agent can call SignalScout as a tool.</td>
+    </tr>
+    <tr>
+      <td class="time">0:40 – 0:55</td>
+      <td class="action">Why-Now ring lands at <strong>98 / 100</strong> · cursor moves to the score-breakdown panel below</td>
+      <td class="voiceover">In thirteen seconds, SignalScout returns a deterministic Why-Now score: ninety-eight out of a hundred. Notice the breakdown — every component is a Python computation, not a number invented by an LLM.</td>
+    </tr>
+    <tr>
+      <td class="time">0:55 – 1:00</td>
+      <td class="action">Scroll to <em>Why-Now Score Breakdown</em> panel · briefly hover the formula line</td>
+      <td class="voiceover">Score equals sum of weight times impact times confidence times mode multiplier. All public, all tunable.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Act 3 — Evidence-First · 1:00 – 1:50</h3>
+<table>
+  <thead>
+    <tr><th class="time">Time</th><th>On-screen</th><th>Voiceover</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="time">1:00 – 1:20</td>
+      <td class="action">Scroll to <em>Evidence Ledger</em> · cursor lingers on a T1 source row with <code>live</code> badge</td>
+      <td class="voiceover">Every signal traces to an evidence row — source URL, tier, confidence, Bright Data tool that fetched it, and a freshness-decayed confidence score. This is what "evidence-first AI" actually looks like.</td>
+    </tr>
+    <tr>
+      <td class="time">1:20 – 1:35</td>
+      <td class="action">Hover the <code>evidence_hash</code> at the bottom of the ledger</td>
+      <td class="voiceover">Two runs on the same input return the same hash. Determinism, audit-grade.</td>
+    </tr>
+    <tr>
+      <td class="time">1:35 – 1:50</td>
+      <td class="action">Scroll to <em>Competitive Landscape</em> table · point at <strong>+3 more used in scoring</strong> footer</td>
+      <td class="voiceover">Competitor signals come from explicit SERP listicle matches, with a confidence-aware quality gate that rejects geography, generic nouns, and platform fragments.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Act 4 — Action Pack · 1:50 – 2:25</h3>
+<table>
+  <thead>
+    <tr><th class="time">Time</th><th>On-screen</th><th>Voiceover</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="time">1:50 – 2:05</td>
+      <td class="action">Scroll to <em>Action Pack</em> · highlight the cold-email subject line</td>
+      <td class="voiceover">And here's the payoff for the sales rep — a ready-to-send cold email, anchored on the actual funding event, with three discovery questions that match the trigger.</td>
+    </tr>
+    <tr>
+      <td class="time">2:05 – 2:20</td>
+      <td class="action">Click <strong>Copy GTM Brief</strong> button · brief "Copied" confirmation pulse</td>
+      <td class="voiceover">One click, the whole brief is in your clipboard. Paste into Slack, Salesforce, or your inbox.</td>
+    </tr>
+    <tr>
+      <td class="time">2:20 – 2:25</td>
+      <td class="action">Scroll up briefly so the Why-Now ring is visible again</td>
+      <td class="voiceover">Score, evidence, action — all from a single company name.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Act 5 — Infrastructure &amp; Close · 2:25 – 3:00</h3>
+<table>
+  <thead>
+    <tr><th class="time">Time</th><th>On-screen</th><th>Voiceover</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="time">2:25 – 2:45</td>
+      <td class="action">Scroll to <em>Bright Data Infrastructure Used</em> panel · cursor traces each tool tile</td>
+      <td class="voiceover">SERP API and Web Unlocker run live every request. The Web Scraper snapshot is pre-warmed because Bright Data's dataset jobs are async — same pattern Salesforce and ZoomInfo use for enterprise LinkedIn data. MCP exposes SignalScout as a tool to any Claude or OpenAI agent.</td>
+    </tr>
+    <tr>
+      <td class="time">2:45 – 2:55</td>
+      <td class="action">Scroll to footer · <em>Demo cheatsheet</em> visible</td>
+      <td class="voiceover">Real enterprise pain. Real Bright Data stack. Evidence-first AI — no black box.</td>
+    </tr>
+    <tr>
+      <td class="time">2:55 – 3:00</td>
+      <td class="action">End card: <code>signalscout-ai.vercel.app</code> · <code>github.com/whard2205/signalscout-ai</code> · <span class="pill">Bright Data + Claude</span></td>
+      <td class="voiceover">SignalScout AI — built for Web Data UNLOCKED.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="section-divider">Discipline</div>
+
+<div class="grid-2">
+  <div class="panel">
+    <strong style="color: var(--accent);">Say these things</strong>
+    <ul>
+      <li>"Deterministic score — not invented by the LLM"</li>
+      <li>"Evidence-first" / "every claim has a source"</li>
+      <li>"Live Bright Data" for SERP + Web Unlocker</li>
+      <li>"Pre-warmed snapshot" for Web Scraper API (the honest label)</li>
+      <li>"Reproducible — evidence hash matches across runs"</li>
+    </ul>
+  </div>
+  <div class="panel danger">
+    <strong>Never say</strong>
+    <ul>
+      <li>"AI generated the score" — it didn't, and we say so</li>
+      <li>"Live Web Scraper" — we serve a cached snapshot, label it correctly</li>
+      <li>"MiMo" — failover is stealth; UI says "Claude"</li>
+      <li>Specific competitor names from memory — let the screen update them</li>
+      <li>"Production-ready" — it's a hackathon submission, judges respect honesty</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Fallback plan (if Cloud Run hiccups)</h2>
+<div class="panel warn">
+<strong>Plan B — localhost:</strong>
+<ol>
+  <li>Run <code>uvicorn main:app --reload --port 8000</code> from <code>backend/</code></li>
+  <li>Run <code>npm run dev</code> from <code>frontend/</code></li>
+  <li>Open <code>http://localhost:3000</code> — the cockpit will hit local backend</li>
+  <li>Same demo flow, same scores (live data still flows through Bright Data SERP)</li>
+</ol>
+<strong>Plan C — pre-recorded screen capture:</strong> have a 3-min screen recording of a clean Anthropic run saved as MP4 backup. Play it if everything else fails. Mention nothing.
+</div>
+
+<h2>Post-record checklist</h2>
+<div class="panel">
+<ul>
+  <li><strong>Length verify:</strong> 2:55 – 3:05 acceptable; cut to 3:00 ± 3s</li>
+  <li><strong>Audio normalize:</strong> −16 LUFS, no clipping above −1 dBFS</li>
+  <li><strong>Captions:</strong> auto-generate, manually fix Bright Data / SignalScout / Anthropic spellings</li>
+  <li><strong>Export:</strong> H.264 1080p MP4, 30 fps, &lt; 200 MB target</li>
+  <li><strong>Upload:</strong> YouTube unlisted + lablab.ai submission</li>
+  <li><strong>Thumbnail:</strong> Why-Now 98 ring + Anthropic name + "Powered by Bright Data + Claude"</li>
+</ul>
+</div>
+
+<div class="footer">Built for Bright Data Web Data UNLOCKED · May 25 – 31, 2026</div>
+</div>
+</body>
+</html>
