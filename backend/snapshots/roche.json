@@ -1,0 +1,44 @@
+{
+  "company": "Roche",
+  "records": [
+    {
+      "job_title": "Record to Report CLA Senior Analyst",
+      "company_name": "Roche",
+      "job_location": "Petaling Jaya, Selangor, Malaysia",
+      "job_seniority_level": "Associate",
+      "job_function": "Finance and Accounting/Auditing",
+      "job_industries": "Pharmaceutical Manufacturing, Biotechnology Research, and Medical Equipment Manufacturing",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 month ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/record-to-report-cla-senior-analyst-at-roche-4404892798?_l=en"
+    },
+    {
+      "job_title": "National Sales Lead",
+      "company_name": "Roche",
+      "job_location": "Johannesburg, Gauteng, South Africa",
+      "job_seniority_level": "Associate",
+      "job_function": "Sales, Marketing, and Product Management",
+      "job_industries": "Pharmaceutical Manufacturing, Biotechnology Research, and Medical Equipment Manufacturing",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 month ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/national-sales-lead-at-roche-4404999408?_l=en"
+    },
+    {
+      "job_title": "DMR（営業職_新潟）",
+      "company_name": "Roche",
+      "job_location": "Sendai, Miyagi, Japan",
+      "job_seniority_level": "Associate",
+      "job_function": "Sales, Marketing, and Product Management",
+      "job_industries": "Pharmaceutical Manufacturing, Biotechnology Research, and Medical Equipment Manufacturing",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "7 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/dmr%EF%BC%88%E5%96%B6%E6%A5%AD%E8%81%B7-%E6%96%B0%E6%BD%9F%EF%BC%89-at-roche-4300557644?_l=en"
+    }
+  ],
+  "fetched_at": 1779896380,
+  "latency_ms": 15000,
+  "record_count": 3
+}

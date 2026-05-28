@@ -1,0 +1,68 @@
+{
+  "company": "Marriott International",
+  "records": [
+    {
+      "job_title": "Steward",
+      "company_name": "Marriott International",
+      "job_location": "Greater Istanbul",
+      "job_seniority_level": "Entry level",
+      "job_function": "Other",
+      "job_industries": "Hospitality",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 month ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/steward-at-marriott-international-4405335317?_l=en"
+    },
+    {
+      "job_title": "Mgr-Employee Housing",
+      "company_name": "Marriott International",
+      "job_location": "Doha, Doha, Qatar",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Other",
+      "job_industries": "Hospitality",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "8 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/mgr-employee-housing-at-marriott-international-4298820574?_l=en"
+    },
+    {
+      "job_title": "F&B Support Expert",
+      "company_name": "Marriott International",
+      "job_location": "Muscat, Masqaţ, Oman",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Hospitality",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "5 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/f-b-support-expert-at-marriott-international-4326200504?_l=en"
+    },
+    {
+      "job_title": "Attendant-Laundry",
+      "company_name": "Marriott International",
+      "job_location": "Doha, Doha, Qatar",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Hospitality",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 year ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/attendant-laundry-at-marriott-international-4177136490?lg=en&_l=en"
+    },
+    {
+      "job_title": "Guest Experience Expert",
+      "company_name": "Marriott International",
+      "job_location": "Doha, Doha, Qatar",
+      "job_seniority_level": "Entry level",
+      "job_function": "Other",
+      "job_industries": "Hospitality",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "10 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/guest-experience-expert-at-marriott-international-4273041087?_l=en"
+    }
+  ],
+  "fetched_at": 1779781610,
+  "latency_ms": 15000,
+  "record_count": 5
+}

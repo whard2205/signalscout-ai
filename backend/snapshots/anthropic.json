@@ -1,0 +1,20 @@
+{
+  "company": "Anthropic",
+  "records": [
+    {
+      "job_title": "Enterprise Account Executive, Industries Generalist",
+      "company_name": "Anthropic",
+      "job_location": "Zurich, Zurich, Switzerland",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Sales and Business Development",
+      "job_industries": "Research Services",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "3 days ago",
+      "job_num_applicants": "153",
+      "url": "https://www.linkedin.com/jobs/view/enterprise-account-executive-industries-generalist-at-anthropic-4416316524?_l=en"
+    }
+  ],
+  "fetched_at": 1779896380,
+  "latency_ms": 15000,
+  "record_count": 1
+}

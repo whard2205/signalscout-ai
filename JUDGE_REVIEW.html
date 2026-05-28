@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SignalScout AI — Judge Review & Saran</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0d0d0f;
+      color: #e2e2e6;
+      line-height: 1.6;
+      padding: 32px 16px;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Verdict banner */
+    .verdict {
+      background: #1a1a1f;
+      border: 1px solid #2a2a35;
+      border-left: 4px solid #f59e0b;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .verdict-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #f59e0b;
+      margin-bottom: 8px;
+    }
+    .verdict p { font-size: 15px; color: #c9c9d3; }
+    .verdict strong { color: #fff; }
+
+    /* Sections */
+    .section {
+      background: #14141a;
+      border: 1px solid #1f1f2e;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #888;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-green  { background: #22c55e; }
+    .dot-red    { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-blue   { background: #3b82f6; }
+    .dot-purple { background: #a855f7; }
+    .dot-orange { background: #fb923c; }
+
+    ul { padding-left: 0; list-style: none; }
+    ul li {
+      font-size: 14px;
+      color: #b0b0c0;
+      padding: 9px 0;
+      border-bottom: 1px solid #1f1f2e;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    ul li:last-child { border-bottom: none; }
+    ul li .num {
+      color: #444;
+      font-size: 11px;
+      min-width: 22px;
+      padding-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    ul li strong { color: #e2e2e6; }
+    code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      background: #1f1f2e;
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: #a5b4fc;
+    }
+
+    /* Scorecard */
+    .scorecard { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 600px) { .scorecard { grid-template-columns: 1fr; } }
+    .score-item {
+      background: #0d0d0f;
+      border: 1px solid #1f1f2e;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .score-item.highlight { border-color: #3b82f640; }
+    .score-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 0.1em; }
+    .score-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 3px;
+      line-height: 1;
+    }
+    .score-denom { font-size: 14px; color: #444; }
+    .score-note { font-size: 11px; color: #555; margin-top: 4px; }
+    .s-green  { color: #22c55e; }
+    .s-yellow { color: #f59e0b; }
+    .s-orange { color: #fb923c; }
+    .s-blue   { color: #60a5fa; }
+
+    /* Critical action */
+    .critical {
+      background: linear-gradient(135deg, #1a0f00, #14141a);
+      border: 1px solid #f59e0b44;
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-top: 8px;
+    }
+    .critical-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #f59e0b;
+      margin-bottom: 10px;
+    }
+    .critical p { font-size: 14px; color: #c9a96e; line-height: 1.8; }
+    .critical strong { color: #fcd34d; }
+
+    /* Priority badges */
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 100px;
+      margin-right: 6px;
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+    }
+    .badge-red    { background: #ef444420; color: #ef4444; border: 1px solid #ef444440; }
+    .badge-yellow { background: #f59e0b20; color: #f59e0b; border: 1px solid #f59e0b40; }
+    .badge-green  { background: #22c55e20; color: #22c55e; border: 1px solid #22c55e40; }
+    .badge-blue   { background: #3b82f620; color: #60a5fa; border: 1px solid #3b82f640; }
+
+    /* Demo narrative */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .timeline-row {
+      display: flex;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid #1f1f2e;
+      align-items: flex-start;
+    }
+    .timeline-row:last-child { border-bottom: none; }
+    .timeline-time {
+      font-size: 11px;
+      color: #3b82f6;
+      font-variant-numeric: tabular-nums;
+      min-width: 60px;
+      padding-top: 2px;
+      font-family: 'SF Mono', monospace;
+    }
+    .timeline-text { font-size: 13px; color: #b0b0c0; }
+    .timeline-text strong { color: #e2e2e6; }
+
+    /* Two col */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+    .col-card {
+      background: #0d0d0f;
+      border: 1px solid #1f1f2e;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .col-card-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #555;
+      margin-bottom: 10px;
+    }
+    .col-card ul li {
+      font-size: 13px;
+      padding: 5px 0;
+    }
+
+    /* Positioning box */
+    .quote-box {
+      background: #0f1520;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-top: 12px;
+    }
+    .quote-box p {
+      font-size: 13px;
+      color: #93c5fd;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: #1f1f2e;
+      margin: 8px 0 24px;
+    }
+
+    /* Page title row */
+    .title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .tag {
+      font-size: 10px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      border: 1px solid #2a2a35;
+      color: #555;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="title-row">
+    <div>
+      <h1>SignalScout AI — Judge Review</h1>
+      <div class="subtitle">Brutal Honest Assessment · Bright Data Hackathon · Mei 2026</div>
+    </div>
+    <span class="tag">Confidential · Internal Use</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ VERDICT -->
+  <div class="verdict">
+    <div class="verdict-label">Verdict Utama</div>
+    <p>
+      Arsitektur <strong>benar</strong>. Framing <strong>jujur</strong>.
+      Tapi selama demo berjalan di mock mode, diferensiasi utama tidak terasa nyata.
+      Proyek ini bisa jadi <strong>top 3</strong> kalau live SERP berjalan mulus dan
+      Evidence Ledger menampilkan artikel nyata dari minggu ini.
+      Kalau tidak — ini adalah <strong>well-built demo, bukan winning project</strong>.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ KEKUATAN -->
+  <div class="section">
+    <div class="section-title"><span class="dot dot-green"></span> Kekuatan Nyata</div>
+    <ul>
+      <li>
+        <span class="num">01</span>
+        <span><strong>Formula deterministik adalah emas.</strong> <code>score = Σ weight × impact × boost × multiplier</code> adalah diferensiasi yang bisa dijelaskan dalam 10 detik. Tidak ada hackathon submission lain yang punya ini.</span>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <span><strong>Honest labeling sistem (live/mock/fallback).</strong> Per evidence row, per badge, per footer. Tidak ada project hackathon yang melabeli demo data sejujur ini. Juri teknis akan notice dan respek.</span>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <span><strong>Audit Trail memisahkan peran Claude dari scoring.</strong> "Claude synthesized titles — it did not generate any numeric score." Framing ini langka, kredibel, dan defensible.</span>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <span><strong>UI/UX production-ready.</strong> Agent Pipeline streaming, Evidence Ledger dengan filter, Formula Panel collapsible. Jauh di atas rata-rata hackathon submission.</span>
+      </li>
+      <li>
+        <span class="num">05</span>
+        <span><strong>Dua concurrent SERP calls via <code>asyncio.gather</code>.</strong> News + competitor query paralel. Menunjukkan Bright Data dipakai dengan thought di balik desain, bukan asal pakai.</span>
+      </li>
+      <li>
+        <span class="num">06</span>
+        <span><strong>MCP Server honesty.</strong> Ditampilkan sebagai "architecture/wired-not-active" bukan live collector. Sinyal product maturity yang jarang di hackathon.</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ KELEMAHAN -->
+  <div class="section">
+    <div class="section-title"><span class="dot dot-red"></span> Kelemahan Nyata</div>
+    <ul>
+      <li>
+        <span class="num">01</span>
+        <span><strong>SERP-only evidence terlalu tipis.</strong> SERP kasih judul + URL + snippet 160 karakter. Tanpa konten artikel, "every claim has a source" terasa lebih kuat dari yang sebenarnya.</span>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <span><strong>Scoring weights arbitrary.</strong> <code>weight("hiring") = 0.30</code> tanpa basis empiris. Satu pertanyaan dari juri: "kenapa 0.30?" dan jawabannya lemah.</span>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <span><strong>Cold email masih pure LLM output.</strong> Ironis dengan positioning "computed, not generated." Juri yang jeli akan notice inconsistency antara klaim dan realita action pack.</span>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <span><strong>Web Scraper + Web Unlocker "wired" tapi tidak aktif.</strong> Di JudgeMode, dua dari empat Bright Data tools berstatus mock/demo. Terkesan seperti fitur yang tidak selesai.</span>
+      </li>
+      <li>
+        <span class="num">05</span>
+        <span><strong>Kategori GTM intelligence sangat ramai.</strong> Clay, Apollo, 6sense, Gong sudah ada. Positioning melawan mereka butuh jawaban yang lebih tajam dari "lebih transparan."</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ RISIKO -->
+  <div class="section">
+    <div class="section-title"><span class="dot dot-yellow"></span> Risiko Terbesar</div>
+    <ul>
+      <li>
+        <span class="num">01</span>
+        <span class="badge badge-red">CRITICAL</span>
+        <span><strong>Demo di mock mode = instant dismiss.</strong> Kalau SERP tidak nyala saat demo, semua argumen diferensiasi runtuh. Ini existential risk.</span>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <span class="badge badge-red">CRITICAL</span>
+        <span><strong>SERP return empty atau error live.</strong> Harus di-test dengan 5+ company berbeda sebelum demo day. Jangan discover masalah saat presentasi.</span>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <span class="badge badge-yellow">HIGH</span>
+        <span><strong>Scoring weights question unanswered.</strong> "Dari mana angka 0.30?" perlu jawaban yang lebih baik dari "saya yang tentukan."</span>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <span class="badge badge-yellow">HIGH</span>
+        <span><strong>"Every claim has a source" di-challenge live.</strong> Kalau juri klik source URL dan dapat 404 atau artikel tidak relevan, kepercayaan langsung hancur.</span>
+      </li>
+      <li>
+        <span class="num">05</span>
+        <span class="badge badge-blue">MEDIUM</span>
+        <span><strong>MCP Server confusion.</strong> Juri yang tidak familiar mungkin confused. Juri yang familiar mungkin skeptis. Risiko tanpa reward besar.</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ IMPROVEMENTS -->
+  <div class="section">
+    <div class="section-title"><span class="dot dot-blue"></span> Saran Prioritas Tinggi (Realistis Sebelum Demo)</div>
+    <ul>
+      <li>
+        <span class="num">01</span>
+        <span class="badge badge-red">Wajib</span>
+        <span><strong>Aktifkan live SERP sekarang.</strong> <code>BRIGHT_DATA_API_TOKEN</code> + <code>USE_MOCK=false</code> harus nyala. Test Ramp, Snowflake, Linear, Notion, Vercel sampai hasil konsisten.</span>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <span class="badge badge-red">Wajib</span>
+        <span><strong>Tampilkan SERP snippet sebagai evidence excerpt.</strong> Bright Data SERP API sudah kasih <code>description</code> per result. Render 1–2 kalimat itu di Evidence Ledger. "Every claim has a source" jadi nyata. ~3 jam kerja.</span>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <span class="badge badge-yellow">Penting</span>
+        <span><strong>Justifikasi scoring weights dengan satu kalimat.</strong> Tambahkan di Formula Panel: <em>"Weights reflect relative buying-signal strength — adjustable per ICP."</em> Cukup untuk menyilencing pertanyaan juri.</span>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <span class="badge badge-yellow">Penting</span>
+        <span><strong>Pilih demo company yang punya recent news.</strong> Cari yang ada funding atau hiring announcement minggu ini. Buka Evidence Ledger, klik source URL live di depan juri — itu moment yang tidak bisa disimulasikan.</span>
+      </li>
+      <li>
+        <span class="num">05</span>
+        <span class="badge badge-blue">Opsional</span>
+        <span><strong>Sembunyikan MCP dari demo flow utama.</strong> Tetap ada di code, tapi jangan jadi focal point presentasi. Kurangi confusion, tambah focus.</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ DEMO NARRATIVE -->
+  <div class="section">
+    <div class="section-title"><span class="dot dot-purple"></span> Demo Narrative Terkuat (3 Menit)</div>
+    <div class="timeline">
+      <div class="timeline-row">
+        <span class="timeline-time">0:00–0:20</span>
+        <div class="timeline-text">
+          <strong>Buka dengan pertanyaan, bukan fitur.</strong><br>
+          "Sales team punya 500 prospect. Tidak tahu mana yang harus dihubungi hari ini. Tools AI yang ada kasih skor 87 tanpa penjelasan. SignalScout kasih formula."
+        </div>
+      </div>
+      <div class="timeline-row">
+        <span class="timeline-time">0:20–0:45</span>
+        <div class="timeline-text">
+          <strong>Type perusahaan, lihat agent pipeline stream live.</strong><br>
+          Tunjukkan dua SERP calls jalan concurrent di timeline. Biarkan badge LIVE MODE muncul di ExecSummary.
+        </div>
+      </div>
+      <div class="timeline-row">
+        <span class="timeline-time">0:45–1:30</span>
+        <div class="timeline-text">
+          <strong>Buka Why-Now Score, tunjukkan Formula Panel.</strong><br>
+          "Ini bukan LLM yang mengarang angka. Ini formula. Setiap input bisa kamu trace ke evidence row di bawah."
+        </div>
+      </div>
+      <div class="timeline-row">
+        <span class="timeline-time">1:30–2:00</span>
+        <div class="timeline-text">
+          <strong>Buka Evidence Ledger, klik satu source URL.</strong><br>
+          Tunjukkan artikel nyata terbuka di tab baru. "Ini dari tiga hari lalu. Bukan demo data."
+        </div>
+      </div>
+      <div class="timeline-row">
+        <span class="timeline-time">2:00–2:30</span>
+        <div class="timeline-text">
+          <strong>Tunjukkan Audit Trail.</strong><br>
+          "Claude menulis summary dan email. Claude tidak menghasilkan satu pun angka. Setiap angka di-compute dari sinyal ini."
+        </div>
+      </div>
+      <div class="timeline-row">
+        <span class="timeline-time">2:30–3:00</span>
+        <div class="timeline-text">
+          <strong>Close dengan diferensiator.</strong><br>
+          "Clay pakai database stale. Apollo guess dari firmographic. SignalScout tanya web sekarang — dan kasih kamu formula yang bisa di-audit. Bukan black box."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ POSITIONING -->
+  <div class="section">
+    <div class="section-title"><span class="dot dot-orange"></span> Positioning vs Clay / Apollo / 6sense</div>
+    <p style="font-size:13px;color:#888;margin-bottom:12px;">Jawaban 15 detik yang harus bisa keluar tanpa berpikir:</p>
+    <div class="quote-box">
+      <p>
+        "Clay agregasi dari database mereka. Apollo punya data kontak yang stale. 6sense pakai black-box ML yang tidak bisa di-audit.
+        SignalScout query live public web di saat kamu bertanya — dan kasih kamu formula yang bisa kamu reproduce sendiri.
+        Bukan vibes. Bukan database. Bukan black box."
+      </p>
+    </div>
+
+    <div class="two-col" style="margin-top:14px;">
+      <div class="col-card">
+        <div class="col-card-title">Jangan Bilang</div>
+        <ul>
+          <li><span class="num">✗</span><span style="color:#ef4444">Lebih akurat dari mereka</span></li>
+          <li><span class="num">✗</span><span style="color:#ef4444">Real-time intelligence (kalau mock)</span></li>
+          <li><span class="num">✗</span><span style="color:#ef4444">AI yang lebih canggih</span></li>
+          <li><span class="num">✗</span><span style="color:#ef4444">Menggantikan Clay/Apollo</span></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">Katakan Ini</div>
+        <ul>
+          <li><span class="num">✓</span><span style="color:#22c55e">Live public web, bukan database</span></li>
+          <li><span class="num">✓</span><span style="color:#22c55e">Formula yang bisa di-audit</span></li>
+          <li><span class="num">✓</span><span style="color:#22c55e">Every score is computable</span></li>
+          <li><span class="num">✓</span><span style="color:#22c55e">Every claim has a source</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ JANGAN DILAKUKAN -->
+  <div class="section">
+    <div class="section-title"><span class="dot dot-red"></span> Yang Tidak Boleh Dilakukan</div>
+    <ul>
+      <li><span class="num">✗</span><span>Demo di mock mode dan berharap juri tidak notice perbedaannya</span></li>
+      <li><span class="num">✗</span><span>Highlight MCP Server sebagai selling point padahal tidak aktif</span></li>
+      <li><span class="num">✗</span><span>Klaim "real-time intelligence" sebelum SERP live dan stabil</span></li>
+      <li><span class="num">✗</span><span>Tunjukkan cold email sebagai proof determinism — justru merusak argumen</span></li>
+      <li><span class="num">✗</span><span>Tambah fitur baru minggu ini kalau live SERP belum stable</span></li>
+      <li><span class="num">✗</span><span>Buka presentasi dengan fitur — buka dengan masalah</span></li>
+      <li><span class="num">✗</span><span>Sebut semua empat Bright Data tools sebagai "aktif" dalam pitch</span></li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ SCORECARD -->
+  <div class="section">
+    <div class="section-title"><span class="dot dot-purple"></span> Scorecard Juri (1–10)</div>
+    <div class="scorecard">
+      <div class="score-item">
+        <div class="score-label">Originality</div>
+        <div class="score-value s-yellow">6<span class="score-denom">/10</span></div>
+        <div class="score-note">Formula panel unik. Konsep GTM intelligence tidak baru.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">Bright Data Fit</div>
+        <div class="score-value s-yellow">7<span class="score-denom">/10</span></div>
+        <div class="score-note">SERP integration real. 2 dari 4 tools masih mock/wired.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">Enterprise Usefulness</div>
+        <div class="score-value s-yellow">7<span class="score-denom">/10</span></div>
+        <div class="score-note">Pain point nyata. Output quality bergantung live data.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">Demo Clarity</div>
+        <div class="score-value s-green">8<span class="score-denom">/10</span></div>
+        <div class="score-note">UI sangat jelas. Agent timeline streaming bagus.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">Technical Credibility</div>
+        <div class="score-value s-yellow">7<span class="score-denom">/10</span></div>
+        <div class="score-note">Scoring engine solid. Weights butuh justifikasi.</div>
+      </div>
+      <div class="score-item">
+        <div class="score-label">Feasibility</div>
+        <div class="score-value s-green">8<span class="score-denom">/10</span></div>
+        <div class="score-note">App berjalan. Mock-safe. Tidak crash. Siap deploy.</div>
+      </div>
+      <div class="score-item highlight" style="grid-column: 1 / -1;">
+        <div class="score-label">Winning Potential</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-top:3px;">
+          <div class="score-value s-orange">6<span class="score-denom">/10</span></div>
+          <div style="font-size:13px;color:#555">mock-only demo</div>
+          <div style="font-size:20px;color:#334;margin:0 4px;">→</div>
+          <div class="score-value s-green">8.5<span class="score-denom">/10</span></div>
+          <div style="font-size:13px;color:#555">live SERP + evidence snippet</div>
+        </div>
+        <div class="score-note" style="margin-top:6px;">Gap antara 6 dan 8.5 adalah satu hal: live mode yang convincing dengan real evidence.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ TOP 3 / FAIL -->
+  <div class="two-col" style="margin-bottom:16px;">
+    <div class="section" style="margin-bottom:0; border-color:#22c55e30;">
+      <div class="section-title"><span class="dot dot-green"></span> Apa yang Buat Top 3</div>
+      <ul>
+        <li><span class="num">1.</span><span>Live SERP mulus + evidence snippet dari artikel nyata</span></li>
+        <li><span class="num">2.</span><span>Demo company punya real news minggu ini</span></li>
+        <li><span class="num">3.</span><span>Formula panel jadi centerpiece demo, bukan sidebar</span></li>
+        <li><span class="num">4.</span><span>Juri klik source URL → artikel real terbuka live</span></li>
+      </ul>
+    </div>
+    <div class="section" style="margin-bottom:0; border-color:#ef444430;">
+      <div class="section-title"><span class="dot dot-red"></span> Apa yang Buat Gagal</div>
+      <ul>
+        <li><span class="num">✗</span><span>Demo di mock mode tanpa live evidence</span></li>
+        <li><span class="num">✗</span><span>SERP error atau return empty saat live</span></li>
+        <li><span class="num">✗</span><span>Tidak bisa jawab "kenapa bukan Apollo?"</span></li>
+        <li><span class="num">✗</span><span>Scoring weights question merusak kredibilitas</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ FINAL REC -->
+  <div class="critical">
+    <div class="critical-label">Rekomendasi Final — Satu Paragraf</div>
+    <p>
+      <strong>Jangan tambah fitur baru.</strong>
+      Spend 70% sisa waktu untuk memastikan live SERP berjalan mulus dan stabil,
+      tambahkan SERP snippet sebagai evidence content (2–3 jam, impact besar),
+      pilih demo company yang punya recent news minggu ini,
+      dan latih demo 3 menit sampai hapal tanpa lihat catatan.
+      Semua arsitektur yang sudah dibangun sudah benar —
+      yang hilang hanya <strong>satu moment proof</strong>:
+      juri lihat artikel nyata dari 3 hari lalu muncul di Evidence Ledger,
+      kamu klik, terbuka di browser. Tidak ada mock yang bisa menyaingi itu.
+      <strong>Itu yang menang.</strong>
+    </p>
+  </div>
+
+  <div style="text-align:center;margin-top:32px;font-size:11px;color:#333;letter-spacing:0.08em;text-transform:uppercase;">
+    SignalScout AI · Evidence-First Why-Now Engine · Internal Judge Review · Mei 2026
+  </div>
+
+</div>
+</body>
+</html>

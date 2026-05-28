@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SignalScout AI — Panduan Sistem</title>
+<style>
+  :root{
+    --bg:#0a0d12; --bg2:#0e131a; --panel:#0f1620; --panel2:#131b27;
+    --line:#1c2533; --line2:#243046;
+    --text:#e6edf6; --muted:#8a97ab; --dim:#5d6a80;
+    --accent:#7cc5ff; --accent2:#9b8cff; --ok:#3ecf8e; --warn:#f4b740; --bad:#ef6e6e;
+    --mono: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, -apple-system, "Inter", "Segoe UI", Roboto, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;font-size:15px}
+  body{
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(124,197,255,.08), transparent 60%),
+      radial-gradient(900px 500px at -10% 30%, rgba(155,140,255,.07), transparent 60%),
+      linear-gradient(transparent 23px, rgba(255,255,255,.025) 24px),
+      linear-gradient(90deg, transparent 23px, rgba(255,255,255,.025) 24px);
+    background-size:auto,auto,24px 24px,24px 24px;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 28px 96px}
+  header.hero{
+    border:1px solid var(--line); background:linear-gradient(180deg,var(--panel),var(--bg2));
+    border-radius:18px; padding:32px 32px 28px; position:relative; overflow:hidden;
+  }
+  header.hero::after{
+    content:""; position:absolute; inset:auto -40% -60% auto; width:520px; height:520px;
+    background:conic-gradient(from 220deg, rgba(124,197,255,.18), transparent 55%, rgba(155,140,255,.18));
+    filter:blur(60px); opacity:.55; pointer-events:none;
+  }
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);
+    border:1px solid var(--line2);padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.02)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(62,207,142,.15)}
+  h1{font-size:38px;line-height:1.15;margin:18px 0 8px;letter-spacing:-.02em}
+  h1 .grad{background:linear-gradient(90deg,#cfe6ff,#b9aaff 60%,#cfe6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{color:var(--muted);max-width:680px;margin:0}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .badge{font-size:12px;color:var(--muted);border:1px solid var(--line2);
+    padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.02)}
+  .badge.live{color:#cfe6ff;border-color:rgba(124,197,255,.4)}
+  .badge.warn{color:#f4d28b;border-color:rgba(244,183,64,.4)}
+
+  nav.toc{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0 36px;
+  }
+  nav.toc a{
+    display:block;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
+    color:var(--text);text-decoration:none;background:var(--panel);font-size:13px;
+    transition:.15s ease;
+  }
+  nav.toc a:hover{border-color:var(--line2);background:var(--panel2);transform:translateY(-1px)}
+  nav.toc a small{display:block;color:var(--dim);font-size:11px;margin-top:2px;letter-spacing:.04em}
+
+  section{margin:40px 0}
+  h2{font-size:22px;letter-spacing:-.01em;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2 .num{font-family:var(--mono);font-size:12px;color:var(--dim);border:1px solid var(--line2);
+    padding:3px 8px;border-radius:8px;background:var(--panel)}
+  h3{font-size:15px;margin:22px 0 8px;color:var(--text)}
+  p{color:#c8d2e1}
+  .muted{color:var(--muted)}
+  .dim{color:var(--dim)}
+
+  .grid{display:grid;gap:14px}
+  .grid.cols-2{grid-template-columns:1fr 1fr}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .card{
+    border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:16px 18px;
+  }
+  .card h4{margin:0 0 6px;font-size:14px;letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+  .card p{margin:0;font-size:13.5px;color:#bfcad9}
+  .icon{width:16px;height:16px;color:var(--accent)}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:500;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+  td code{color:#cfe6ff}
+
+  pre{
+    background:#070a0f;border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+    overflow:auto;font-family:var(--mono);font-size:12.8px;line-height:1.6;color:#d6e0ef;
+    position:relative;
+  }
+  pre .c{color:#5d6a80} /* comment */
+  pre .k{color:#b9aaff} /* keyword/command */
+  pre .s{color:#9be8c2} /* string/path */
+  pre .o{color:#f4d28b} /* output */
+  code.inline{
+    font-family:var(--mono);font-size:12.5px;background:#0b1018;border:1px solid var(--line);
+    padding:1px 6px;border-radius:6px;color:#cfe6ff
+  }
+
+  .pipeline{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:10px;
+  }
+  .pipeline .step{
+    border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel);
+    position:relative;font-size:12.5px;
+  }
+  .pipeline .step b{display:block;color:#cfe6ff;font-weight:600;font-size:13px;margin-bottom:4px}
+  .pipeline .step .k{font-family:var(--mono);color:var(--dim);font-size:11px}
+  .pipeline .arrow{position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:14px}
+
+  .checklist{list-style:none;padding:0;margin:0}
+  .checklist li{
+    padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);
+    margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;font-size:13.5px
+  }
+  .checklist li .box{
+    width:16px;height:16px;border-radius:4px;border:1.5px solid var(--line2);
+    flex:0 0 auto;margin-top:3px;display:flex;align-items:center;justify-content:center;color:var(--ok);font-size:11px
+  }
+
+  .callout{
+    border:1px solid rgba(244,183,64,.35);background:rgba(244,183,64,.05);
+    border-radius:12px;padding:14px 16px;color:#f4d28b;font-size:13.5px
+  }
+  .callout.good{border-color:rgba(62,207,142,.35);background:rgba(62,207,142,.05);color:#9be8c2}
+  .callout.bad{border-color:rgba(239,110,110,.35);background:rgba(239,110,110,.05);color:#f4b5b5}
+  .callout b{color:#fff}
+
+  .modeRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .mode{
+    border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--panel);
+    min-width:200px;flex:1;font-size:13px
+  }
+  .mode b{display:block;font-size:13.5px;margin-bottom:3px}
+  .mode .pill{
+    display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:999px;
+    border:1px solid var(--line2);color:var(--muted);margin-left:6px
+  }
+  .pill.green{color:#9be8c2;border-color:rgba(62,207,142,.4)}
+  .pill.purple{color:#cdbfff;border-color:rgba(155,140,255,.4)}
+  .pill.amber{color:#f4d28b;border-color:rgba(244,183,64,.4)}
+
+  footer{
+    margin-top:60px;padding-top:24px;border-top:1px solid var(--line);
+    color:var(--dim);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
+  }
+
+  @media (max-width:780px){
+    h1{font-size:30px}
+    nav.toc{grid-template-columns:repeat(2,1fr)}
+    .grid.cols-2,.grid.cols-3{grid-template-columns:1fr}
+    .pipeline{grid-template-columns:1fr 1fr}
+    .pipeline .arrow{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <span class="eyebrow"><span class="dot"></span> Bright Data Web Data UNLOCKED — 25–31 Mei 2026</span>
+  <h1>SignalScout AI <span class="grad">— Panduan Sistem</span></h1>
+  <p class="lede">
+    Why-Now Deal Intelligence Agent. User mengetik nama company → backend menarik signal web live via Bright Data → Claude mensintesis laporan
+    intelijen berbasis bukti. Dokumen ini menjelaskan <b>apa saja yang sudah dibuat</b> dan <b>cara nge-tes</b>-nya untuk persiapan demo 3 menit.
+  </p>
+  <div class="badges">
+    <span class="badge live">FastAPI · Python 3.11+</span>
+    <span class="badge live">Next.js 14 · Tailwind · TS</span>
+    <span class="badge">Claude Sonnet 4.6</span>
+    <span class="badge">Bright Data SERP / Unlocker / Scraper</span>
+    <span class="badge warn">Mode default: mock (demo-safe)</span>
+  </div>
+</header>
+
+<!-- ============ TOC ============ -->
+<nav class="toc">
+  <a href="#overview"><b>1. Apa Sistem Ini</b><small>Tujuan & ruang lingkup</small></a>
+  <a href="#stack"><b>2. Yang Sudah Jadi</b><small>Backend + Frontend</small></a>
+  <a href="#flow"><b>3. Alur Data</b><small>Mock → Score → Claude</small></a>
+  <a href="#setup"><b>4. Setup & Install</b><small>Backend + Frontend</small></a>
+  <a href="#run"><b>5. Cara Menjalankan</b><small>Dua terminal</small></a>
+  <a href="#test"><b>6. Cara Tes & Verifikasi</b><small>Smoke test bertahap</small></a>
+  <a href="#modes"><b>7. Mode mock/hybrid/live</b><small>Aktifkan API keys</small></a>
+  <a href="#demo"><b>8. Skenario Demo 3 Menit</b><small>Untuk hari lomba</small></a>
+</nav>
+
+<!-- ============ 1. OVERVIEW ============ -->
+<section id="overview">
+  <h2><span class="num">01</span> Apa Sistem Ini?</h2>
+  <p>
+    SignalScout AI menjawab satu pertanyaan untuk tim sales/GTM: <i>“Kenapa kita harus contact company ini sekarang?”</i>
+    Output-nya bukan chatbot, tapi <b>intelligence cockpit</b> — satu layar dashboard yang menampilkan skor Why-Now, signal grid,
+    evidence ledger, action pack (cold email + LinkedIn + discovery), competitor table, dan agent timeline live.
+  </p>
+  <div class="grid cols-3" style="margin-top:14px">
+    <div class="card">
+      <h4>Target Optimasi</h4>
+      <p>Menang demo live 3 menit. Wow factor + clarity untuk juri &gt; kedalaman teknis.</p>
+    </div>
+    <div class="card">
+      <h4>Prinsip No-BS</h4>
+      <p>Setiap klaim wajib punya evidence ID + source + Bright Data tool + confidence. Tidak ada halusinasi.</p>
+    </div>
+    <div class="card">
+      <h4>Mode Aman</h4>
+      <p>Mock mode selalu jalan. Kalau API live gagal di tengah demo, cockpit tetap render lengkap.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. STACK ============ -->
+<section id="stack">
+  <h2><span class="num">02</span> Yang Sudah Jadi</h2>
+
+  <h3>Backend — <code class="inline">backend/</code></h3>
+  <table>
+    <thead><tr><th style="width:38%">File</th><th>Fungsi</th></tr></thead>
+    <tbody>
+      <tr><td><code>main.py</code></td><td>Entry point uvicorn, daftar CORS, mount router</td></tr>
+      <tr><td><code>app/api/routes.py</code></td><td>Endpoint <code>/health</code>, <code>/analyze</code>, <code>/analyze/stream</code> (SSE)</td></tr>
+      <tr><td><code>app/models/schemas.py</code></td><td>Kontrak Pydantic — sumber kebenaran tunggal untuk shape JSON</td></tr>
+      <tr><td><code>app/services/bright_data.py</code></td><td>Wrapper SERP / Unlocker / Scraper Bright Data + fallback mock; tidak pernah <i>raise</i></td></tr>
+      <tr><td><code>app/services/claude_service.py</code></td><td>Sintesis Claude (model <code>claude-sonnet-4-6</code>); return <code>None</code> kalau API key kosong</td></tr>
+      <tr><td><code>app/services/scoring.py</code></td><td>Engine skor deterministik — angka dihitung di sini, BUKAN oleh LLM</td></tr>
+      <tr><td><code>app/services/mock_data.py</code></td><td>Data mock seeded — input sama → output sama (penting untuk demo determinism)</td></tr>
+      <tr><td><code>.env.example</code></td><td>Kontrak env: <code>BRIGHT_DATA_API_TOKEN</code>, <code>ANTHROPIC_API_KEY</code>, <code>USE_MOCK</code>, dll.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Frontend — <code class="inline">frontend/</code></h3>
+  <table>
+    <thead><tr><th style="width:38%">File</th><th>Fungsi</th></tr></thead>
+    <tbody>
+      <tr><td><code>app/page.tsx</code></td><td>Halaman root — render <code>&lt;Cockpit /&gt;</code></td></tr>
+      <tr><td><code>components/Cockpit.tsx</code></td><td>Layout utama + wiring SSE (EventSource native)</td></tr>
+      <tr><td><code>components/AgentTimeline.tsx</code></td><td>Pipeline live di rail kanan — step running/done</td></tr>
+      <tr><td><code>components/WhyNowScore.tsx</code></td><td>Score ring utama (conic-gradient) + 3 mini-scores</td></tr>
+      <tr><td><code>components/SignalGrid.tsx</code></td><td>8 jenis signal dengan ikon <code>lucide-react</code></td></tr>
+      <tr><td><code>components/EvidenceLedger.tsx</code></td><td>Tabel sumber kebenaran — link ke source + Bright Data tool</td></tr>
+      <tr><td><code>components/ActionPack.tsx</code></td><td>Cold email + LinkedIn DM + pertanyaan discovery</td></tr>
+      <tr><td><code>components/CompetitorTable.tsx</code></td><td>Tabel kompetitor</td></tr>
+      <tr><td><code>components/JudgeMode.tsx</code></td><td>Panel infrastruktur Bright Data — naratif untuk juri</td></tr>
+      <tr><td><code>components/ui/primitives.tsx</code></td><td>Card / Button / Badge / StatDot — basis semua komponen</td></tr>
+      <tr><td><code>lib/api.ts · types.ts · utils.ts</code></td><td>Client API (analyzeOnce + analyzeStream) · mirror schemas backend · helper</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ 3. FLOW ============ -->
+<section id="flow">
+  <h2><span class="num">03</span> Alur Data</h2>
+  <p class="muted">Frontend mengirim nama company → backend menyusun response deterministik → frontend stream timeline + render cockpit.</p>
+
+  <div class="pipeline">
+    <div class="step"><b>1. Input</b><span class="k">POST /analyze</span><div class="arrow">›</div></div>
+    <div class="step"><b>2. Mock Baseline</b><span class="k">build_mock_response()</span><div class="arrow">›</div></div>
+    <div class="step"><b>3. Score Engine</b><span class="k">compute_scores()</span><div class="arrow">›</div></div>
+    <div class="step"><b>4. Claude Overlay</b><span class="k">synthesize() (opsional)</span><div class="arrow">›</div></div>
+    <div class="step"><b>5. Response</b><span class="k">AnalyzeResponse JSON</span></div>
+  </div>
+
+  <h3>SSE — endpoint streaming</h3>
+  <p>Untuk efek timeline live, <code class="inline">/analyze/stream</code> emit event:</p>
+  <pre><span class="c">// Urutan event SSE</span>
+<span class="k">start</span>   → cockpit menampilkan indikator "Live"
+<span class="k">step</span>    → tandai step current = done, advance step berikutnya = running
+<span class="k">result</span>  → render laporan lengkap
+<span class="k">end</span>     → tutup stream, set running = false</pre>
+  <div class="callout">
+    <b>Catatan sinkronisasi:</b> <code class="inline">TIMELINE_STEPS</code> di <code class="inline">backend/app/api/routes.py</code>
+    dan <code class="inline">PIPELINE</code> di <code class="inline">Cockpit.tsx</code> dijaga sinkron <i>by key</i>.
+    Kalau nambah step, tambahin di kedua tempat dengan key yang sama.
+  </div>
+</section>
+
+<!-- ============ 4. SETUP ============ -->
+<section id="setup">
+  <h2><span class="num">04</span> Setup &amp; Install</h2>
+
+  <h3>A. Backend (Python 3.11+)</h3>
+  <pre><span class="c"># di folder proyek</span>
+<span class="k">cd</span> backend
+<span class="k">python -m venv</span> .venv
+<span class="k">.\.venv\Scripts\Activate.ps1</span>    <span class="c"># PowerShell Windows</span>
+<span class="k">pip install -r</span> requirements.txt
+<span class="k">copy</span> .env.example .env       <span class="c"># biarkan USE_MOCK=true dulu</span></pre>
+
+  <h3>B. Frontend (Node 18+ / 20+)</h3>
+  <pre><span class="k">cd</span> frontend
+<span class="k">npm install</span>
+<span class="k">copy</span> .env.local.example .env.local</pre>
+
+  <div class="callout good">
+    <b>Tanpa API key pun bisa jalan.</b> Default <code class="inline">USE_MOCK=true</code> + tidak ada
+    <code class="inline">ANTHROPIC_API_KEY</code> = mode <b>mock</b>. Cockpit tetap menampilkan laporan lengkap dengan data seeded yang konsisten.
+  </div>
+</section>
+
+<!-- ============ 5. RUN ============ -->
+<section id="run">
+  <h2><span class="num">05</span> Cara Menjalankan</h2>
+  <p class="muted">Buka <b>dua terminal</b>, biarkan keduanya hidup selama demo.</p>
+
+  <div class="grid cols-2">
+    <div>
+      <h3>Terminal 1 — Backend</h3>
+      <pre><span class="k">cd</span> backend
+<span class="k">.\.venv\Scripts\Activate.ps1</span>
+<span class="k">uvicorn</span> main:app --reload --port 8000</pre>
+      <p class="dim">Akan listen di <code class="inline">http://localhost:8000</code></p>
+    </div>
+    <div>
+      <h3>Terminal 2 — Frontend</h3>
+      <pre><span class="k">cd</span> frontend
+<span class="k">npm run dev</span></pre>
+      <p class="dim">Akan listen di <code class="inline">http://localhost:3000</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. TEST ============ -->
+<section id="test">
+  <h2><span class="num">06</span> Cara Tes &amp; Verifikasi</h2>
+  <p class="muted">Tes bertahap dari paling dasar (backend hidup) sampai paling visual (cockpit lengkap). Kalau step gagal, jangan lanjut.</p>
+
+  <ul class="checklist">
+    <li>
+      <div class="box">✓</div>
+      <div>
+        <b>Step 1 — Backend hidup.</b>
+        Buka <code class="inline">http://localhost:8000/health</code>. Harus return JSON seperti
+        <code class="inline">{"status":"ok","mode":"mock","claude":"mock"}</code>. Kalau error → cek terminal backend.
+      </div>
+    </li>
+    <li>
+      <div class="box">✓</div>
+      <div>
+        <b>Step 2 — Endpoint <code>/analyze</code>.</b>
+        Buka Swagger UI di <code class="inline">http://localhost:8000/docs</code>. POST <code class="inline">/analyze</code> dengan body
+        <code class="inline">{"company":"Ramp"}</code>. Harus return JSON berisi <code class="inline">scores</code>, <code class="inline">signals</code>,
+        <code class="inline">evidence</code>, <code class="inline">action_pack</code>, dan <code class="inline">mode:"mock"</code>.
+      </div>
+    </li>
+    <li>
+      <div class="box">✓</div>
+      <div>
+        <b>Step 3 — Cockpit render.</b>
+        Buka <code class="inline">http://localhost:3000</code>. Layar gelap dengan input company harus muncul. Tidak ada
+        white screen / console error merah.
+      </div>
+    </li>
+    <li>
+      <div class="box">✓</div>
+      <div>
+        <b>Step 4 — Streaming timeline.</b>
+        Ketik <code class="inline">Ramp</code> → klik Analyze. <b>AgentTimeline</b> di kanan harus animasi step-by-step
+        (start → setiap step running lalu done → result). Indikator "Live" muncul saat streaming aktif.
+      </div>
+    </li>
+    <li>
+      <div class="box">✓</div>
+      <div>
+        <b>Step 5 — Semua panel terisi.</b>
+        Setelah streaming selesai cek: <b>WhyNowScore</b> ring punya angka,
+        <b>SignalGrid</b> menampilkan ikon-ikon signal, <b>EvidenceLedger</b> tabelnya berisi baris dengan source + Bright Data tool,
+        <b>ActionPack</b> menampilkan cold email + LinkedIn + pertanyaan discovery.
+      </div>
+    </li>
+    <li>
+      <div class="box">✓</div>
+      <div>
+        <b>Step 6 — Mode badge.</b>
+        Di header cockpit harus tampak badge <code class="inline">mock</code>. Ini sengaja tidak disembunyikan — bagian dari safety story.
+      </div>
+    </li>
+    <li>
+      <div class="box">✓</div>
+      <div>
+        <b>Step 7 — Determinisme.</b>
+        Analyze <code class="inline">Ramp</code> dua kali. Skor &amp; signals harus identik (mock seeded). Kalau beda → bug.
+      </div>
+    </li>
+    <li>
+      <div class="box">✓</div>
+      <div>
+        <b>Step 8 — Crash test (penting untuk demo).</b>
+        Matikan backend (<code class="inline">Ctrl+C</code> di terminal backend), refresh frontend. Cockpit harus tetap render
+        empty state yang bersih — bukan white screen. Ini bukti mode aman.
+      </div>
+    </li>
+  </ul>
+
+  <div class="callout">
+    <b>Hero companies untuk pre-cache demo:</b> Ramp, Snowflake, Vercel, Linear, Notion. Tes semuanya minimal sekali sebelum demo.
+  </div>
+</section>
+
+<!-- ============ 7. MODES ============ -->
+<section id="modes">
+  <h2><span class="num">07</span> Mode mock / hybrid / live</h2>
+  <p class="muted">Badge mode di cockpit menampilkan kondisi runtime.</p>
+
+  <div class="modeRow">
+    <div class="mode">
+      <b>mock <span class="pill amber">default</span></b>
+      Bright Data &amp; Claude tidak dikonfigurasi. Data 100% dari <code class="inline">mock_data.py</code>. Selalu jalan.
+    </div>
+    <div class="mode">
+      <b>hybrid <span class="pill purple">Claude only</span></b>
+      <code class="inline">ANTHROPIC_API_KEY</code> diisi, tapi Bright Data masih mock. Executive summary &amp; why-now reason dioverlay Claude.
+    </div>
+    <div class="mode">
+      <b>live <span class="pill green">full stack</span></b>
+      Bright Data tokens terisi + <code class="inline">USE_MOCK=false</code>. Signals datang dari SERP / Scraper / Unlocker beneran.
+    </div>
+  </div>
+
+  <h3>Mengaktifkan Claude (mode hybrid)</h3>
+  <pre><span class="c"># backend/.env</span>
+<span class="k">ANTHROPIC_API_KEY=</span><span class="s">sk-ant-xxxxxxxx</span></pre>
+  <p class="dim">Restart backend → badge berubah jadi <code class="inline">hybrid</code>. Kalau gagal API, fallback ke mock — tidak crash.</p>
+
+  <h3>Mengaktifkan Bright Data (mode live)</h3>
+  <pre><span class="c"># backend/.env</span>
+<span class="k">USE_MOCK=</span>false
+<span class="k">BRIGHT_DATA_API_TOKEN=</span><span class="s">xxxxxxxx</span>
+<span class="k">BRIGHT_DATA_SERP_ZONE=</span>serp_api1
+<span class="k">BRIGHT_DATA_UNLOCKER_ZONE=</span>unblocker
+<span class="k">BRIGHT_DATA_SCRAPER_DATASET_ID=</span><span class="s">gd_xxxxxx</span></pre>
+  <div class="callout bad">
+    <b>Aturan keras:</b> jangan commit <code class="inline">.env</code>. <code class="inline">.env.example</code> adalah kontrak — token asli hanya lokal.
+  </div>
+</section>
+
+<!-- ============ 8. DEMO ============ -->
+<section id="demo">
+  <h2><span class="num">08</span> Skenario Demo 3 Menit</h2>
+  <p class="muted">Urutan tindakan saat live di depan juri. Latihan minimal 3x sebelum hari-H.</p>
+
+  <ol style="padding-left:18px">
+    <li><b>0:00 — Hook.</b> "Sales tim ngabisin 30% waktu cari alasan kenapa harus contact company sekarang. Kita otomatisasi itu pakai live web data."</li>
+    <li><b>0:20 — Buka cockpit.</b> Tunjuk badge mode <code class="inline">live</code>. Ketik <b>Ramp</b>. Klik Analyze.</li>
+    <li><b>0:30 — AgentTimeline.</b> Sambil step jalan, narate: "SERP API menarik news, Scraper menarik LinkedIn jobs, Unlocker masuk ke blog yang JS-rendered."</li>
+    <li><b>1:10 — WhyNowScore.</b> Tunjuk ring + 3 mini-score. Tekankan: "Angka ini deterministik, dihitung di <code class="inline">scoring.py</code> — bukan dihalusinasi LLM."</li>
+    <li><b>1:40 — EvidenceLedger.</b> Klik salah satu evidence. "Setiap klaim punya source URL + Bright Data tool + confidence."</li>
+    <li><b>2:10 — ActionPack.</b> Tunjuk cold email dengan personalisasi yang merujuk evidence. "Ini siap di-paste ke Outreach."</li>
+    <li><b>2:30 — JudgeMode.</b> Buka panel infrastruktur. Tunjuk SERP + Scraper + Unlocker + MCP. "Empat permukaan Bright Data, satu agent."</li>
+    <li><b>2:50 — Close.</b> "Mock mode selalu siap. Live mode menarik signal beneran. Why-now, evidence-first, no-BS."</li>
+  </ol>
+
+  <div class="callout good">
+    <b>Disiplin hari demo:</b> jangan refactor besar, jangan tambah fitur baru. Cuma polish &amp; rehearse.
+    Pre-cache 5 hero companies. Pastikan crash test (step 8) lulus.
+  </div>
+</section>
+
+<footer>
+  <div>SignalScout AI · Panduan internal · dokumen untuk persiapan demo</div>
+  <div>Bright Data Web Data UNLOCKED · 25–31 Mei 2026 · SF + online</div>
+</footer>
+
+</div>
+</body>
+</html>

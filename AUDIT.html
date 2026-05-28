@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SignalScout AI — Brutal Pre-Submit Audit</title>
+<style>
+  :root{
+    --bg:#0a0d12; --bg2:#0e131a; --panel:#0f1620; --panel2:#131b27;
+    --line:#1c2533; --line2:#243046;
+    --text:#e6edf6; --muted:#8a97ab; --dim:#5d6a80;
+    --accent:#7cc5ff; --accent2:#9b8cff; --ok:#3ecf8e; --warn:#f4b740; --bad:#ef6e6e;
+    --mono: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, -apple-system, "Inter", "Segoe UI", Roboto, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;font-size:15px}
+  body{
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(124,197,255,.08), transparent 60%),
+      radial-gradient(900px 500px at -10% 30%, rgba(155,140,255,.07), transparent 60%),
+      linear-gradient(transparent 23px, rgba(255,255,255,.025) 24px),
+      linear-gradient(90deg, transparent 23px, rgba(255,255,255,.025) 24px);
+    background-size:auto,auto,24px 24px,24px 24px;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:48px 28px 96px}
+
+  header.hero{
+    border:1px solid var(--line); background:linear-gradient(180deg,var(--panel),var(--bg2));
+    border-radius:18px; padding:28px 32px; position:relative; overflow:hidden;
+  }
+  header.hero::after{
+    content:""; position:absolute; inset:auto -40% -60% auto; width:520px; height:520px;
+    background:conic-gradient(from 220deg, rgba(124,197,255,.18), transparent 55%, rgba(155,140,255,.18));
+    filter:blur(60px); opacity:.55; pointer-events:none;
+  }
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);
+    border:1px solid var(--line2);padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.02)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(62,207,142,.15)}
+  h1{font-size:34px;line-height:1.12;margin:14px 0 6px;letter-spacing:-.02em}
+  h1 .grad{background:linear-gradient(90deg,#cfe6ff,#b9aaff 60%,#cfe6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{color:var(--muted);max-width:760px;margin:0;font-size:14.5px}
+
+  .verdict{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:24px 0 32px;
+  }
+  .stat{
+    border:1px solid var(--line); background:var(--panel); border-radius:14px; padding:16px 18px;
+  }
+  .stat .num{font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1}
+  .stat .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .stat.good .num{color:var(--ok)}
+  .stat.warn .num{color:var(--warn)}
+  .stat.bad .num{color:var(--bad)}
+  .stat.info .num{color:var(--accent)}
+
+  .ready-banner{
+    border:1px solid rgba(62,207,142,.4); background:linear-gradient(180deg,rgba(62,207,142,.08),transparent);
+    border-radius:14px; padding:20px 24px; margin:0 0 32px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .ready-banner .label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ok)}
+  .ready-banner h3{margin:6px 0 0;font-size:20px;font-weight:600}
+  .ready-banner .when{font-size:13px;color:var(--muted)}
+
+  section{margin:40px 0}
+  h2{font-size:23px;letter-spacing:-.01em;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+  h2 .num{font-family:var(--mono);font-size:12px;color:var(--dim);border:1px solid var(--line2);
+    padding:3px 8px;border-radius:8px;background:var(--panel)}
+  h2 .tag{font-family:var(--mono);font-size:11px;margin-left:auto;
+    padding:3px 10px;border-radius:999px;letter-spacing:.04em}
+  h2 .tag.fix{color:#9be8c2;border:1px solid rgba(62,207,142,.35);background:rgba(62,207,142,.05)}
+  h2 .tag.hold{color:#f4d28b;border:1px solid rgba(244,183,64,.35);background:rgba(244,183,64,.05)}
+  h3{font-size:14px;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+  p{color:#c8d2e1;margin:8px 0}
+
+  .issue{
+    border:1px solid var(--line); background:var(--panel); border-radius:14px;
+    padding:18px 22px; margin:14px 0;
+    border-left:3px solid var(--dim);
+  }
+  .issue.fixed{border-left-color:var(--ok)}
+  .issue.open{border-left-color:var(--warn)}
+  .issue.critical{border-left-color:var(--bad)}
+  .issue .head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .issue .title{font-size:15px;font-weight:600;color:#fff}
+  .issue .meta{display:flex;gap:6px;flex-wrap:wrap}
+  .issue .pill{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+    padding:3px 9px;border-radius:999px;border:1px solid var(--line2);color:var(--muted);background:rgba(255,255,255,.02)}
+  .issue .pill.crit{color:#f4b5b5;border-color:rgba(239,110,110,.4)}
+  .issue .pill.high{color:#f4d28b;border-color:rgba(244,183,64,.4)}
+  .issue .pill.med{color:#cfe6ff;border-color:rgba(124,197,255,.4)}
+  .issue .pill.fixed{color:#9be8c2;border-color:rgba(62,207,142,.4);background:rgba(62,207,142,.06)}
+  .issue p{margin:6px 0;font-size:14px}
+
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .ba > div{
+    border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+    font-family:var(--mono);font-size:12px;line-height:1.55;
+    white-space:pre-wrap;word-break:break-word;
+  }
+  .ba .before{border-color:rgba(239,110,110,.25);background:rgba(239,110,110,.04);color:#f4b5b5}
+  .ba .after{border-color:rgba(62,207,142,.25);background:rgba(62,207,142,.04);color:#9be8c2}
+  .ba .lbl{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:5px;font-weight:600}
+
+  table.checklist{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px;
+    border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table.checklist th,table.checklist td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.checklist th{color:var(--muted);font-weight:500;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--panel)}
+  table.checklist td.ok{color:#9be8c2}
+  table.checklist td.bad{color:#f4b5b5}
+  table.checklist td:first-child{width:50px;text-align:center;font-size:18px}
+  table.checklist tr:last-child td{border-bottom:none}
+
+  .ax-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+  .ax{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:18px 20px}
+  .ax h4{margin:0 0 10px;font-size:14px;display:flex;align-items:center;justify-content:space-between}
+  .ax .score{font-family:var(--mono);font-size:12px;padding:3px 9px;border-radius:6px;
+    background:rgba(124,197,255,.08);color:var(--accent);border:1px solid rgba(124,197,255,.3)}
+  .ax p{font-size:13px;color:#c8d2e1;margin:4px 0}
+
+  pre{
+    background:#070a0f;border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+    overflow:auto;font-family:var(--mono);font-size:12px;line-height:1.55;color:#d6e0ef;
+    margin:10px 0;
+  }
+  code.inline{
+    font-family:var(--mono);font-size:12.5px;background:#0b1018;border:1px solid var(--line);
+    padding:1px 6px;border-radius:6px;color:#cfe6ff
+  }
+
+  .summary-callout{
+    border:1px solid rgba(155,140,255,.4); background:linear-gradient(180deg,rgba(155,140,255,.06),transparent);
+    border-radius:14px; padding:20px 24px; margin:28px 0;
+  }
+  .summary-callout h3{color:var(--accent2);margin:0 0 10px;font-size:14px;letter-spacing:.1em}
+  .summary-callout p{margin:6px 0;font-size:14.5px;color:#e6edf6}
+
+  footer{
+    margin-top:60px;padding-top:24px;border-top:1px solid var(--line);
+    color:var(--dim);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
+  }
+
+  @media (max-width:780px){
+    .verdict{grid-template-columns:repeat(2,1fr)}
+    .ba,.ax-grid{grid-template-columns:1fr}
+    h1{font-size:26px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<header class="hero">
+  <span class="eyebrow"><span class="dot"></span> Brutal pre-submit audit · 26 Mei 2026</span>
+  <h1>Audit — <span class="grad">Ready to Submit?</span></h1>
+  <p class="lede">
+    Cross-check end-to-end. Apa yang udah solid, apa yang masih bocor, apa yang harus dilakuin sebelum klik "submit"
+    di portal Bright Data hackathon.
+  </p>
+</header>
+
+<!-- VERDICT STATS -->
+<div class="verdict">
+  <div class="stat good">
+    <div class="num">7/8</div>
+    <div class="lbl">Issues Fixed</div>
+  </div>
+  <div class="stat info">
+    <div class="num">3</div>
+    <div class="lbl">Live Bright Data Tools</div>
+  </div>
+  <div class="stat info">
+    <div class="num">~10s</div>
+    <div class="lbl">Cold start latency</div>
+  </div>
+  <div class="stat good">
+    <div class="num">&lt;100ms</div>
+    <div class="lbl">Cached (post-warmup)</div>
+  </div>
+</div>
+
+<!-- READY BANNER -->
+<div class="ready-banner">
+  <div>
+    <div class="label">verdict</div>
+    <h3>✅ READY TO SUBMIT after recording video</h3>
+    <div class="when">Recommended submit window: <strong>28 — 29 Mei 2026</strong>. No need wait sampai 31 Mei.</div>
+  </div>
+  <div style="font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right">
+    Confidence: HIGH<br>
+    Critical issues: 0<br>
+    Open polish: 1
+  </div>
+</div>
+
+<!-- =========== ISSUES FOUND & FIXED =========== -->
+<section>
+  <h2><span class="num">01</span> Issues Found in Brutal Audit <span class="tag fix">7 fixed</span></h2>
+  <p class="muted">Setiap issue di-grade by demo damage. Critical = juri instant suspicion. High = credibility leak. Medium = polish.</p>
+
+  <!-- ISSUE 1 -->
+  <div class="issue fixed">
+    <div class="head">
+      <div class="title">#1 — Company profile bocor mock data (London, UK · 51-200 employees)</div>
+      <div class="meta">
+        <span class="pill crit">CRITICAL</span>
+        <span class="pill fixed">FIXED</span>
+      </div>
+    </div>
+    <p><strong>Apa yang terjadi:</strong> waktu live mode, cockpit nampilin Ramp HQ di <em>"London, UK"</em>
+      dengan size <em>"51-200 employees"</em>. Padahal Ramp HQ di New York dan punya ~1500 karyawan.
+      Data ini dari random pick di <code class="inline">mock_data.py</code> — nggak di-override sama live evidence.</p>
+    <p><strong>Damage:</strong> juri yang familiar Ramp langsung tahu ini bohong. Kredibilitas anjlok.</p>
+    <p><strong>Fix:</strong> <code class="inline">_scrub_profile_for_live()</code> — di live mode, set
+      industry/hq/size/description = <code class="inline">None</code>. Frontend conditional rendering otomatis hide
+      field-field itu.</p>
+    <div class="ba">
+      <div class="before"><span class="lbl">Before</span>{
+  "hq": "London, UK",
+  "size": "51-200",
+  "description": "...[DEMO DATA — not verified]"
+}</div>
+      <div class="after"><span class="lbl">After (live mode)</span>{
+  "name": "Ramp",
+  "domain": "ramp.com",
+  "hq": null,
+  "size": null,
+  "description": null
+}</div>
+    </div>
+  </div>
+
+  <!-- ISSUE 2 -->
+  <div class="issue fixed">
+    <div class="head">
+      <div class="title">#2 — Action Pack bocor placeholder template <code class="inline">{first_name}</code></div>
+      <div class="meta">
+        <span class="pill crit">CRITICAL</span>
+        <span class="pill fixed">FIXED</span>
+      </div>
+    </div>
+    <p><strong>Apa yang terjadi:</strong> cold email di Action Pack masih nampilin <code class="inline">Hi {first_name}</code> dan
+      <code class="inline">— {your_name}</code>. Plus sales angles nyebut "G2 pain", "competitor discount", "cloud partnership" —
+      semua mock data yang nggak ada di live evidence.</p>
+    <p><strong>Damage:</strong> instant "AI ini fake" reaction dari juri. Placeholder yang nggak ke-render = looks like a bug.</p>
+    <p><strong>Fix:</strong> dua-layer.
+      (1) MiMo prompt di-tighten supaya return action_pack overlay yang reference real numbers.
+      (2) Validation: kalau MiMo return placeholder, REJECT — fallback ke
+      <code class="inline">_live_action_pack()</code> yang build deterministic dari live evidence dengan placeholder
+      square-bracket <code class="inline">[Name]</code> (intentional, bukan broken).</p>
+    <div class="ba">
+      <div class="before"><span class="lbl">Before</span>Hi {first_name},
+
+Noticed Ramp is leaning into enterprise — new tier, fresh hiring across Sales and RevOps, and a recent cloud partnership.
+
+— {your_name}</div>
+      <div class="after"><span class="lbl">After (Ramp)</span>Hi [Name],
+
+Congrats on the recent $300M raise and reaching a $32B valuation. Doubling revenue and customers in a year is a massive operational lift.
+
+— [Your Name]</div>
+    </div>
+  </div>
+
+  <!-- ISSUE 3 -->
+  <div class="issue fixed">
+    <div class="head">
+      <div class="title">#3 — Web Unlocker text dump berisi nav junk + boilerplate</div>
+      <div class="meta">
+        <span class="pill high">HIGH</span>
+        <span class="pill fixed">FIXED</span>
+      </div>
+    </div>
+    <p><strong>Apa yang terjadi:</strong> extracted article text dari PR Newswire kelihatan:
+      <em>"...Ramp Raises $500M... <strong>Accessibility Statement Skip Navigation Resources . Investor Relations .
+        Journalists . Send a Release ...</strong>"</em></p>
+    <p><strong>Damage:</strong> evidence row Web Unlocker keliatan sloppy. Bukan article — keliatan kayak HTML dump.</p>
+    <p><strong>Fix:</strong> upgrade <code class="inline">_strip_html_to_text()</code>:
+      (1) drop <code class="inline">&lt;nav&gt;</code>/<code class="inline">&lt;header&gt;</code>/<code class="inline">&lt;footer&gt;</code>/<code class="inline">&lt;aside&gt;</code> blocks,
+      (2) prefer <code class="inline">&lt;article&gt;</code> / <code class="inline">&lt;main&gt;</code> / common post-body containers,
+      (3) regex filter: drop lines &lt; 25 chars OR matching menu patterns (Accessibility, Privacy, Cookies, Skip to, dll.).</p>
+    <div class="ba">
+      <div class="before"><span class="lbl">Before</span>Ramp Raises $500 Million... Accessibility Statement Skip Navigation Resources . Investor Relations . Journalists . Agencies . Client Login . Send a Release . News . Products . Contact . Search...</div>
+      <div class="after"><span class="lbl">After</span>Ramp Reaches $32 Billion Valuation, Doubling Revenue and Customers in Past Year Part of $300M Raise and Employee Tender Offer NEW YORK, Nov. 17, 2025 /PRNewswire/ -- Ramp, the leading financial operations platform...</div>
+    </div>
+  </div>
+
+  <!-- ISSUE 4 -->
+  <div class="issue fixed">
+    <div class="head">
+      <div class="title">#4 — Why-Now Reason terlalu verbose, hedgy, no concrete numbers</div>
+      <div class="meta">
+        <span class="pill high">HIGH</span>
+        <span class="pill fixed">FIXED</span>
+      </div>
+    </div>
+    <p><strong>Apa yang terjadi:</strong> reason ngomong "the company has just closed a massive funding round" tanpa
+      sebut angka. Generic enterprise speak — nggak ada satu fact yang ditangkap juri.</p>
+    <p><strong>Fix:</strong> system prompt di Claude + MiMo ditambahin format constraint:
+      <em>"why_now_reason: ONE punchy sentence, ≤180 chars, format [Concrete fact]. [Specific implication]."</em></p>
+    <div class="ba">
+      <div class="before"><span class="lbl">Before (282 chars)</span>The company has just closed a massive funding round at a high valuation and is experiencing exceptional year-over-year profitability growth. This indicates they have the capital and momentum to invest in new solutions and scale their operations, making them receptive to vendor outreach.</div>
+      <div class="after"><span class="lbl">After (122 chars)</span>Ramp just closed a $300M round at a $32B valuation, signaling aggressive growth spending and a prime window for vendor outreach.</div>
+    </div>
+  </div>
+
+  <!-- ISSUE 5 -->
+  <div class="issue fixed">
+    <div class="head">
+      <div class="title">#5 — Mock signals + Web Scraper [DEMO] evidence leaking ke Evidence Ledger</div>
+      <div class="meta">
+        <span class="pill high">HIGH</span>
+        <span class="pill fixed">FIXED</span>
+      </div>
+    </div>
+    <p><strong>Apa yang terjadi:</strong> EvidenceLedger nampilin row dengan tag <code class="inline">[DEMO]</code>
+      saat mode <code class="inline">live</code>. Konflik visual: badge atas bilang LIVE, badge row bilang demo.</p>
+    <p><strong>Fix:</strong> step 4a baru di <code class="inline">_build_response</code>: kalau ada minimal 1 live evidence,
+      drop semua mock evidence + mock signals. Signal cards di-regenerate dari live data via
+      <code class="inline">_inject_live_signals()</code>.</p>
+  </div>
+
+  <!-- ISSUE 6 -->
+  <div class="issue fixed">
+    <div class="head">
+      <div class="title">#6 — Bright Data SERP response parser nggak nge-baca body</div>
+      <div class="meta">
+        <span class="pill crit">CRITICAL</span>
+        <span class="pill fixed">FIXED</span>
+      </div>
+    </div>
+    <p><strong>Apa yang terjadi:</strong> Bright Data SERP API balas HTTP 200 tapi parser kita selalu return empty.
+      Status di infra log <code class="inline">fallback</code> tapi latency real (~2.5s).</p>
+    <p><strong>Root cause:</strong> Bright Data wrap response dalam struktur
+      <code class="inline">{status_code, headers, body: "&lt;JSON string&gt;"}</code>. Parser kita langsung baca
+      <code class="inline">raw["organic"]</code> di top-level — sebenarnya datanya nested di
+      <code class="inline">raw["body"]</code> yang harus di-parse JSON ulang.</p>
+    <p><strong>Fix:</strong> tambah <code class="inline">_unwrap_serp_body()</code> helper. Parser sekarang detect
+      kalau ada field <code class="inline">body: str</code> → <code class="inline">json.loads()</code> dulu.
+      <strong>Sekali ini di-fix, evidence count langsung naik dari 0 → 7 per call.</strong></p>
+  </div>
+
+  <!-- ISSUE 7 -->
+  <div class="issue fixed">
+    <div class="head">
+      <div class="title">#7 — MiMo model name salah default (MiMo-V2.5 → 400 error)</div>
+      <div class="meta">
+        <span class="pill high">HIGH</span>
+        <span class="pill fixed">FIXED</span>
+      </div>
+    </div>
+    <p><strong>Apa yang terjadi:</strong> default model name <code class="inline">MiMo-V2.5</code> ditolak Xiaomi API
+      dengan "Not supported model". Probe ke endpoint <code class="inline">/v1/models</code> revealed lowercase format:
+      <code class="inline">mimo-v2.5</code>.</p>
+    <p><strong>Fix:</strong> default model di <code class="inline">mimo_service.py</code> diganti ke
+      <code class="inline">mimo-v2.5</code> (lowercase + dash). Sekarang synthesis jalan, executive_summary +
+      why_now_reason + action_pack semua keluar real.</p>
+  </div>
+
+  <!-- ISSUE 8 -->
+  <div class="issue open">
+    <div class="head">
+      <div class="title">#8 — Confidence score stuck di "medium" karena hiring + review signal kosong</div>
+      <div class="meta">
+        <span class="pill med">MEDIUM</span>
+        <span class="pill" style="color:#f4d28b;border-color:rgba(244,183,64,.4);background:rgba(244,183,64,.06)">OPEN · acceptable</span>
+      </div>
+    </div>
+    <p><strong>Apa yang terjadi:</strong> Why-Now confidence selalu "medium" (jarang "high") karena scoring engine
+      cari 6 signal kind (hiring, news momentum, product launch, competitor pressure, review pain, funding/partnership).
+      Hiring + review datanya cuma dari Web Scraper API yang masih di mode <em>architecture</em>.</p>
+    <p><strong>Status:</strong> NOT fixed, dan <strong>aman dibiarkan</strong>. Medium confidence justru jujur — kita
+      udah explicit di UI bilang Web Scraper "wired · not active". Kalau confidence "high" tapi data partial, itu over-promise.</p>
+    <p><strong>Demo angle:</strong> bisa jadi talking point: "Notice the confidence is medium — we don't have hiring or
+      review data this run. With Scraper dataset wired, confidence rises to high."</p>
+  </div>
+</section>
+
+<!-- =========== JUDGING AXES =========== -->
+<section>
+  <h2><span class="num">02</span> Cross-check ke Hackathon Judging Axes <span class="tag fix">strong on 4/5</span></h2>
+  <p class="muted">Estimasi judging criteria Bright Data Web Data UNLOCKED — di mana SignalScout kuat, di mana lemah.</p>
+
+  <div class="ax-grid">
+    <div class="ax">
+      <h4>Use of Bright Data tools <span class="score">9/10</span></h4>
+      <p>✅ 3 tools live (SERP×2 + Web Unlocker), 2 wired (Scraper + MCP). Tool chaining: SERP discovers URL → Unlocker reads it.</p>
+      <p>⚠️ Web Scraper API + MCP nggak aktif. Tapi "wired · not active" framing jujur + sophisticated.</p>
+    </div>
+    <div class="ax">
+      <h4>Use case strength <span class="score">9/10</span></h4>
+      <p>✅ Sales/GTM intelligence — jelas, dollar-value clear, target user obvious.</p>
+      <p>✅ "Why-Now" framing — unique angle, bukan generic "company research".</p>
+    </div>
+    <div class="ax">
+      <h4>Demo polish & UI <span class="score">9/10</span></h4>
+      <p>✅ Enterprise cockpit aesthetic (Palantir/Linear inspired). Bukan Streamlit/Gradio kayak 90% kompetitor.</p>
+      <p>✅ Streaming timeline, conic score ring, evidence ledger — semua visual wow factor.</p>
+    </div>
+    <div class="ax">
+      <h4>Technical depth <span class="score">8/10</span></h4>
+      <p>✅ Deterministic scoring engine (bukan LLM-hallucinated angka) — strong differentiator.</p>
+      <p>✅ Multi-provider LLM cascade (Claude → MiMo fallback) — production-grade.</p>
+      <p>✅ SSE streaming, in-memory cache, evidence linkage.</p>
+    </div>
+    <div class="ax">
+      <h4>Originality / Wow <span class="score">8/10</span></h4>
+      <p>✅ "Evidence-first, no hallucinated scores" — repeatable phrase.</p>
+      <p>✅ Audit Trail menampilkan score weights — judges belum pernah lihat ini.</p>
+      <p>⚠️ Tinggal pesaing ada yg pake MCP atau Agent SDK — itu wow factor besar yang bisa nyaingin.</p>
+    </div>
+    <div class="ax">
+      <h4>Demo resilience <span class="score">10/10</span></h4>
+      <p>✅ Mock mode = guaranteed render kalau live calls fail. CLAUDE.md prinsip.</p>
+      <p>✅ MiMo failover kalau Claude credit habis (silent, no UI signal).</p>
+      <p>✅ Pre-cache hero companies → < 100ms repeat runs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========== SUBMIT CHECKLIST =========== -->
+<section>
+  <h2><span class="num">03</span> Submit Checklist <span class="tag hold">3 todo</span></h2>
+  <p class="muted">Sebelum klik tombol submit di portal hackathon Bright Data, beresin ini.</p>
+
+  <table class="checklist">
+    <thead>
+      <tr><th></th><th>Item</th><th style="width:20%">Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>✅</td><td>Backend & frontend running, <code class="inline">mode: live</code></td><td class="ok">DONE</td></tr>
+      <tr><td>✅</td><td>3 Bright Data tools live (SERP × 2 + Web Unlocker), zero placeholder leaks</td><td class="ok">DONE</td></tr>
+      <tr><td>✅</td><td>MiMo synthesis working (executive summary + why-now + action pack from real numbers)</td><td class="ok">DONE</td></tr>
+      <tr><td>✅</td><td>Company profile clean (no London/51-200 lies)</td><td class="ok">DONE</td></tr>
+      <tr><td>✅</td><td>Web Unlocker text clean (zero nav junk)</td><td class="ok">DONE</td></tr>
+      <tr><td>✅</td><td>Cache + /warmup endpoint working (cold 18s → cached 5ms)</td><td class="ok">DONE</td></tr>
+      <tr><td>✅</td><td>JudgeMode panel honest (3 live, 2 wired)</td><td class="ok">DONE</td></tr>
+      <tr><td>⏳</td><td><strong>Record 60-second teaser video</strong> (Loom recommended) — backup + LinkedIn post</td><td class="bad">TODO</td></tr>
+      <tr><td>⏳</td><td><strong>Rehearsal 3-menit pitch × 5</strong> sambil timer (DEMO_KIT.html section P4)</td><td class="bad">TODO</td></tr>
+      <tr><td>⏳</td><td><strong>Push to public URL</strong> (Vercel + Render/Fly) untuk submission link</td><td class="bad">TODO</td></tr>
+      <tr><td>⏳</td><td>Pre-warm hero companies on production URL right before judging</td><td class="bad">TODO (day-of)</td></tr>
+      <tr><td>✅</td><td>README + GUIDE.html ready</td><td class="ok">DONE</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =========== STRATEGIC ADVICE =========== -->
+<section>
+  <h2><span class="num">04</span> Strategic Advice — Menangin dari 1490 Peserta</h2>
+
+  <div class="summary-callout">
+    <h3>3 hal yang nentuin lo masuk top 5%</h3>
+    <p><strong>1. Killer phrase yang DIULANG.</strong> "Why-Now Deal Intelligence — evidence-first, no hallucinated scores."
+      Bilang minimal 2× saat pitch. Juri review 100+ demo, yang ke-ingat cuma satu-dua phrase per submission.</p>
+    <p><strong>2. Konsisten visual.</strong> 90% kompetitor pake Streamlit/Gradio (functional tapi nggak enterprise).
+      Lo udah punya cockpit Palantir-inspired. Itu visual moat. Jangan rusak last-minute.</p>
+    <p><strong>3. Resilience story.</strong> Wifi mati di stage? Mock mode otomatis. Claude API down?
+      MiMo failover. Ini story sales-engineering yang juri Bright Data appreciate banget.</p>
+  </div>
+
+  <h3>Jangan dilakuin sebelum submit</h3>
+  <ul style="color:#c8d2e1;font-size:14px;padding-left:20px">
+    <li>❌ Tambah Web Scraper API dataset baru — async polling = demo lambat, risk tinggi</li>
+    <li>❌ Refactor besar-besaran — bug last-minute = catastrophic</li>
+    <li>❌ Tambah feature baru — sudah cukup, polish yang ada</li>
+    <li>❌ Tambah auth/login — explicitly forbidden di CLAUDE.md</li>
+  </ul>
+
+  <h3>Lakuin sebelum submit</h3>
+  <ul style="color:#9be8c2;font-size:14px;padding-left:20px">
+    <li>✅ Rekam video 60-detik (Loom, 15 menit)</li>
+    <li>✅ Push ke Vercel (frontend) + Render/Fly (backend). Cantumin URL di submission</li>
+    <li>✅ Rehearsal pitch 3-menit × 5 kali</li>
+    <li>✅ Post video ke LinkedIn + tag @bright_data — visibility bonus pre-judging</li>
+  </ul>
+</section>
+
+<footer>
+  <div>SignalScout AI · Brutal Audit Report · 26 Mei 2026</div>
+  <div>5 hari sampai 31 Mei · status: <strong style="color:var(--ok)">READY after video + deploy</strong></div>
+</footer>
+
+</div>
+</body>
+</html>

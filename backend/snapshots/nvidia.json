@@ -1,0 +1,44 @@
+{
+  "company": "NVIDIA",
+  "records": [
+    {
+      "job_title": "Senior Tax Specialist",
+      "company_name": "NVIDIA",
+      "job_location": "Raanana, Center District, Israel",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Accounting/Auditing",
+      "job_industries": "Computer Hardware Manufacturing, Software Development, and Computers and Electronics Manufacturing",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 year ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/senior-tax-specialist-at-nvidia-4235757695?_l=en"
+    },
+    {
+      "job_title": "Software Infrastructure and Tools Engineer, Software Infrastructure and Tools Engineer",
+      "company_name": "NVIDIA",
+      "job_location": "Rawabi, West Bank",
+      "job_seniority_level": "Entry level",
+      "job_function": "Engineering",
+      "job_industries": "Computer Hardware Manufacturing, Software Development, and Computers and Electronics Manufacturing",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "3 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/software-infrastructure-and-tools-engineer-at-nvidia-4365418785?_l=en"
+    },
+    {
+      "job_title": "Senior Internal Communications Manager, Copywriting, Senior Internal Communications Manager, Copywriting",
+      "company_name": "NVIDIA",
+      "job_location": "Tel Aviv-Yafo, Tel Aviv District, Israel",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Marketing",
+      "job_industries": "Computer Hardware Manufacturing, Software Development, and Computers and Electronics Manufacturing",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "3 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/senior-internal-communications-manager-copywriting-at-nvidia-4370507016?_l=en"
+    }
+  ],
+  "fetched_at": 1779896380,
+  "latency_ms": 15000,
+  "record_count": 3
+}

@@ -1,0 +1,56 @@
+{
+  "company": "Amazon",
+  "records": [
+    {
+      "job_title": "Senior Financial Analyst, US Hardlines Finance",
+      "company_name": "Amazon",
+      "job_location": "Seattle, WA",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Finance, Information Technology, and Accounting/Auditing",
+      "job_industries": "Software Development",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 month ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/senior-financial-analyst-us-hardlines-finance-at-amazon-4404900189?_l=en"
+    },
+    {
+      "job_title": "Engineer, Retrofit Engineering, JCFS",
+      "company_name": "Amazon",
+      "job_location": "Sakai, Osaka, Japan",
+      "job_seniority_level": "Not Applicable",
+      "job_function": "Management, Distribution, and Supply Chain",
+      "job_industries": "Software Development",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "9 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/engineer-retrofit-engineering-jcfs-at-amazon-4266248842?_l=en"
+    },
+    {
+      "job_title": "Regional Facilities Specialist",
+      "company_name": "Amazon",
+      "job_location": "Shakopee, MN",
+      "job_seniority_level": "Not Applicable",
+      "job_function": "Other and Manufacturing",
+      "job_industries": "Software Development",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "2 weeks ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/regional-facilities-specialist-at-amazon-4408839326?_l=en"
+    },
+    {
+      "job_title": "Sr. Program Manager, Leadership Development Programs, Learning and PXT Operations",
+      "company_name": "Amazon",
+      "job_location": "New York, United States",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Human Resources and Information Technology",
+      "job_industries": "Software Development",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 week ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/sr-program-manager-leadership-development-programs-learning-and-pxt-operations-at-amazon-4414238326?_l=en"
+    }
+  ],
+  "fetched_at": 1779896380,
+  "latency_ms": 15000,
+  "record_count": 4
+}

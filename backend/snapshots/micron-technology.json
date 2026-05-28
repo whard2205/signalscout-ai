@@ -1,0 +1,44 @@
+{
+  "company": "Micron Technology",
+  "records": [
+    {
+      "job_title": "Workforce Development Engineer – Technology & Products Group",
+      "company_name": "Micron Technology",
+      "job_location": "Singapore, Singapore",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Other",
+      "job_industries": "Computer Hardware Manufacturing, Appliances, Electrical, and Electronics Manufacturing, and Semiconductor Manufacturing",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "6 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/workforce-development-engineer-%E2%80%93-technology-products-group-at-micron-technology-4274094921?_l=en"
+    },
+    {
+      "job_title": "NY1 - Wastewater Engineer - FAC",
+      "company_name": "Micron Technology",
+      "job_location": "Clay, IN",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Other",
+      "job_industries": "Computer Hardware Manufacturing, Appliances, Electrical, and Electronics Manufacturing, and Semiconductor Manufacturing",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "2 weeks ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/ny1-wastewater-engineer-fac-at-micron-technology-4410855090?_l=en"
+    },
+    {
+      "job_title": "PDE PWF CEM Process Engineer",
+      "company_name": "Micron Technology",
+      "job_location": "Taichung City, Taichung City, Taiwan",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Other",
+      "job_industries": "Computer Hardware Manufacturing, Appliances, Electrical, and Electronics Manufacturing, and Semiconductor Manufacturing",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 year ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/pde-pwf-cem-process-engineer-at-micron-technology-4157057778?lg=en&_l=en"
+    }
+  ],
+  "fetched_at": 1779896380,
+  "latency_ms": 15000,
+  "record_count": 3
+}

@@ -1,0 +1,44 @@
+{
+  "company": "Affirm",
+  "records": [
+    {
+      "job_title": "Staff Product Manager, Affirm Bank",
+      "company_name": "Affirm",
+      "job_location": "Victoria, British Columbia, Canada",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Product Management and Marketing",
+      "job_industries": "Financial Services",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "5 days ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/staff-product-manager-affirm-bank-at-affirm-4415992127?_l=en"
+    },
+    {
+      "job_title": "Senior Staff Machine Learning Engineer, (Machine Learning)",
+      "company_name": "Affirm",
+      "job_location": "Sioux Falls, SD",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Engineering and Information Technology",
+      "job_industries": "Financial Services",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 week ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/senior-staff-machine-learning-engineer-machine-learning-at-affirm-4326604380?_l=en"
+    },
+    {
+      "job_title": "Key Accounts Account Executive II",
+      "company_name": "Affirm",
+      "job_location": "San Francisco, CA",
+      "job_seniority_level": "Mid-Senior level",
+      "job_function": "Sales and Business Development",
+      "job_industries": "Financial Services",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 week ago",
+      "job_num_applicants": "40",
+      "url": "https://www.linkedin.com/jobs/view/key-accounts-account-executive-ii-at-affirm-4362551154?_l=en"
+    }
+  ],
+  "fetched_at": 1779896380,
+  "latency_ms": 15000,
+  "record_count": 3
+}

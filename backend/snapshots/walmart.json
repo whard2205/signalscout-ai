@@ -1,0 +1,140 @@
+{
+  "company": "Walmart",
+  "records": [
+    {
+      "job_title": "Pharmacy Grad Intern (Hrly)",
+      "company_name": "Walmart",
+      "job_location": "Show Low, AZ",
+      "job_seniority_level": "Internship",
+      "job_function": "Health Care Provider",
+      "job_industries": "Retail",
+      "job_employment_type": "Part-time",
+      "job_posted_time": "6 days ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/pharmacy-grad-intern-hrly-at-walmart-4368490049?_l=en"
+    },
+    {
+      "job_title": "Seasonal Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Strongsville, OH",
+      "job_seniority_level": "Entry level",
+      "job_function": "Administrative",
+      "job_industries": "Retail",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 day ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/seasonal-team-associate-at-walmart-4397700104?_l=en"
+    },
+    {
+      "job_title": "Stocking Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Meridian, MS",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Retail",
+      "job_employment_type": "Part-time",
+      "job_posted_time": "4 days ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/stocking-team-associate-at-walmart-4343719832?_l=en"
+    },
+    {
+      "job_title": "Online Order Filling Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Forest, MS",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Retail",
+      "job_employment_type": "Part-time",
+      "job_posted_time": "2 weeks ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/online-order-filling-team-associate-at-walmart-4333724130?_l=en"
+    },
+    {
+      "job_title": "Deli/Bakery Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Woodsville, NH",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Retail",
+      "job_employment_type": "Part-time",
+      "job_posted_time": "1 month ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/deli-bakery-team-associate-at-walmart-4395388505?_l=en"
+    },
+    {
+      "job_title": "Deli/Bakery Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Andover, MN",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Retail",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "3 weeks ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/deli-bakery-team-associate-at-walmart-4384129265?_l=en"
+    },
+    {
+      "job_title": "Online Order Filling Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Fergus Falls, MN",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Retail",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "6 days ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/online-order-filling-team-associate-at-walmart-4333863536?_l=en"
+    },
+    {
+      "job_title": "Online Order Filling Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Beaufort, SC",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Retail",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "2 weeks ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/online-order-filling-team-associate-at-walmart-4379573915?_l=en"
+    },
+    {
+      "job_title": "Online Order Filling Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Kaufman, TX",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Retail",
+      "job_employment_type": "Part-time",
+      "job_posted_time": "2 weeks ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/online-order-filling-team-associate-at-walmart-4333754231?_l=en"
+    },
+    {
+      "job_title": "Backroom Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Canton, OH",
+      "job_seniority_level": "Entry level",
+      "job_function": "Management and Manufacturing",
+      "job_industries": "Retail",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 week ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/backroom-team-associate-at-walmart-4406889255?_l=en"
+    },
+    {
+      "job_title": "Seasonal Team Associate",
+      "company_name": "Walmart",
+      "job_location": "Aberdeen, SD",
+      "job_seniority_level": "Entry level",
+      "job_function": "Administrative",
+      "job_industries": "Retail",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "2 weeks ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/seasonal-team-associate-at-walmart-4398968328?_l=en"
+    }
+  ],
+  "fetched_at": 1779896380,
+  "latency_ms": 27500,
+  "record_count": 11
+}

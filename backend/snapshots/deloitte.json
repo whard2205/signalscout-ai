@@ -1,0 +1,68 @@
+{
+  "company": "Deloitte",
+  "records": [
+    {
+      "job_title": "Marketing Cloud AI Architect - Specialist Master",
+      "company_name": "Deloitte",
+      "job_location": "Tempe, AZ",
+      "job_seniority_level": "Not Applicable",
+      "job_function": "Engineering and Information Technology",
+      "job_industries": "Accounting, IT Services and IT Consulting, and Business Consulting and Services",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "6 days ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/marketing-cloud-ai-architect-specialist-master-at-deloitte-4406105153?_l=en"
+    },
+    {
+      "job_title": "Engineering Manager - PxE Platforms",
+      "company_name": "Deloitte",
+      "job_location": "Omaha, NE",
+      "job_seniority_level": "Not Applicable",
+      "job_function": "Engineering and Information Technology",
+      "job_industries": "Accounting, IT Services and IT Consulting, and Business Consulting and Services",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "3 weeks ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/engineering-manager-pxe-platforms-at-deloitte-4387634654?_l=en"
+    },
+    {
+      "job_title": "T&T Consultant - SAP Basis - MY",
+      "company_name": "Deloitte",
+      "job_location": "Kuala Lumpur, Federal Territory of Kuala Lumpur, Malaysia",
+      "job_seniority_level": "Entry level",
+      "job_function": "Consulting and Information Technology",
+      "job_industries": "Business Consulting and Services, IT Services and IT Consulting, and Software Development",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "8 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/t-t-consultant-sap-basis-my-at-deloitte-4247754662?_l=en"
+    },
+    {
+      "job_title": "Desarrollador/a Front End",
+      "company_name": "Deloitte",
+      "job_location": "Bogota, D.C., Capital District, Colombia",
+      "job_seniority_level": "Not Applicable",
+      "job_function": "Information Technology",
+      "job_industries": "International Trade and Development",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "1 week ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/desarrollador-a-front-end-at-deloitte-4412105281?_l=en"
+    },
+    {
+      "job_title": "Experience Project Specialist",
+      "company_name": "Deloitte",
+      "job_location": "San Jose, Costa Rica",
+      "job_seniority_level": "Not Applicable",
+      "job_function": "Administrative",
+      "job_industries": "Business Consulting and Services and Events Services",
+      "job_employment_type": "Full-time",
+      "job_posted_time": "5 months ago",
+      "job_num_applicants": "0",
+      "url": "https://www.linkedin.com/jobs/view/experience-project-specialist-at-deloitte-4328271377?_l=en"
+    }
+  ],
+  "fetched_at": 1779896380,
+  "latency_ms": 15000,
+  "record_count": 5
+}

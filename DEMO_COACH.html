@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SignalScout AI — Demo Coach</title>
+<style>
+  :root {
+    --bg: #07090d;
+    --bg-card: #0f1521;
+    --bg-elev: #0c1118;
+    --line: #1a2235;
+    --ink: #e6edf7;
+    --ink-muted: #8b97ad;
+    --ink-dim: #5a667e;
+    --accent: #7cf0c8;
+    --warn: #ffb547;
+    --danger: #ff6b6b;
+    --info: #6aa9ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, 'Inter', ui-sans-serif, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 40px 20px 80px;
+  }
+  .page { max-width: 900px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: rgba(124,240,200,0.1);
+    border: 1px solid rgba(124,240,200,0.3);
+    border-radius: 10px;
+    display: grid; place-items: center;
+    font-size: 18px;
+  }
+  .logo-text h1 { font-size: 18px; font-weight: 600; }
+  .logo-text p { font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.14em; }
+  .header-meta { font-size: 11px; color: var(--ink-dim); text-align: right; }
+
+  /* Section */
+  .section { margin-bottom: 40px; }
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* Card */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card + .card { margin-top: 12px; }
+
+  /* Pitch row */
+  .pitch-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .pitch-row:last-child { border-bottom: none; }
+  .pitch-time {
+    padding: 16px;
+    background: var(--bg-elev);
+    border-right: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 80px;
+  }
+  .pitch-time .duration {
+    font-size: 10px;
+    color: var(--ink-dim);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .pitch-body { padding: 16px; }
+  .pitch-action {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+  .pitch-say {
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .pitch-say mark {
+    background: rgba(124,240,200,0.15);
+    color: var(--accent);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-style: normal;
+    font-weight: 500;
+  }
+  .pitch-tip {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--ink-dim);
+    padding: 8px 10px;
+    background: var(--bg-elev);
+    border-radius: 6px;
+    border-left: 2px solid var(--line);
+  }
+  .pitch-tip.warn { border-color: var(--warn); color: var(--warn); }
+  .pitch-tip.accent { border-color: var(--accent); color: var(--accent); }
+
+  /* Killer phrases */
+  .phrase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+  }
+  .phrase-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .phrase-card.key { border-color: rgba(124,240,200,0.3); background: rgba(124,240,200,0.04); }
+  .phrase-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-dim);
+    margin-bottom: 6px;
+  }
+  .phrase-text {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .phrase-text strong { color: var(--accent); font-weight: 600; }
+  .phrase-why {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  /* Checklist */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-box {
+    width: 18px; height: 18px;
+    border: 2px solid var(--line);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: grid; place-items: center;
+  }
+  .check-box:hover { border-color: var(--accent); }
+  .check-box.done { background: var(--accent); border-color: var(--accent); }
+  .check-box.done::after { content: '✓'; font-size: 11px; color: #07090d; font-weight: 700; }
+  .check-content { flex: 1; }
+  .check-title { font-size: 13.5px; color: var(--ink); font-weight: 500; }
+  .check-desc { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+  .check-code {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: var(--accent);
+  }
+  .priority {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .priority.critical { background: rgba(255,107,107,0.15); color: var(--danger); border: 1px solid rgba(255,107,107,0.3); }
+  .priority.high { background: rgba(255,181,71,0.12); color: var(--warn); border: 1px solid rgba(255,181,71,0.3); }
+  .priority.medium { background: rgba(106,169,255,0.12); color: var(--info); border: 1px solid rgba(106,169,255,0.3); }
+
+  /* Improve table */
+  .improve-grid { display: grid; gap: 10px; }
+  .improve-row {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 600px) { .improve-row { grid-template-columns: 1fr; } }
+  .improve-now { border-color: rgba(124,240,200,0.25); }
+  .improve-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 6px;
+  }
+  .improve-label.current { color: var(--danger); }
+  .improve-label.better { color: var(--accent); }
+  .improve-text { font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+  .improve-text strong { color: var(--ink); }
+
+  /* Judge checklist */
+  .judge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+  }
+  .judge-item {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .judge-item.have { border-color: rgba(124,240,200,0.25); }
+  .judge-status {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: grid; place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .judge-status.yes { background: rgba(124,240,200,0.15); color: var(--accent); }
+  .judge-status.no  { background: rgba(255,107,107,0.15); color: var(--danger); }
+  .judge-status.partial { background: rgba(255,181,71,0.15); color: var(--warn); }
+  .judge-criterion { font-size: 13px; color: var(--ink); font-weight: 500; }
+  .judge-note { font-size: 11.5px; color: var(--ink-muted); margin-top: 3px; }
+
+  /* Tags */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-muted);
+    background: var(--bg-elev);
+    margin-right: 4px;
+    margin-top: 4px;
+  }
+  .tag.live { color: var(--accent); border-color: rgba(124,240,200,0.3); background: rgba(124,240,200,0.08); }
+
+  /* One-liner box */
+  .oneliner {
+    background: rgba(124,240,200,0.06);
+    border: 1px solid rgba(124,240,200,0.25);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .oneliner .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-muted); margin-bottom: 8px; }
+  .oneliner .line { font-size: 22px; font-weight: 600; color: var(--accent); line-height: 1.4; }
+  .oneliner .sub { font-size: 13px; color: var(--ink-muted); margin-top: 8px; }
+
+  /* Print */
+  @media print {
+    body { background: white; color: black; }
+    .card, .phrase-card, .judge-item, .improve-row { border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">📡</div>
+      <div class="logo-text">
+        <h1>SignalScout AI — Demo Coach</h1>
+        <p>Bright Data Web Data UNLOCKED · May 31, 2026</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      3-minute pitch · Live data checklist · What to improve<br>
+      <span style="color: var(--accent)">Memorize. Practice. Win.</span>
+    </div>
+  </div>
+
+  <!-- One-liner -->
+  <div class="oneliner">
+    <div class="label">Your one sentence. Say it before every practice run.</div>
+    <div class="line">"Most AI tools make up a number and call it a score.<br>SignalScout computes it from a formula — and shows the work."</div>
+    <div class="sub">If judges remember nothing else, they remember this.</div>
+  </div>
+
+  <!-- ── PITCH SCRIPT ── -->
+  <div class="section">
+    <div class="section-title">3-Minute Pitch Script — word for word</div>
+    <div class="card">
+
+      <div class="pitch-row">
+        <div class="pitch-time">0:00<div class="duration">15s</div></div>
+        <div class="pitch-body">
+          <div class="pitch-action">🎯 Open with pain — no intro, no "hi my name is"</div>
+          <div class="pitch-say">
+            "Sales reps spend <mark>3 to 4 hours</mark> manually researching a company before outreach.
+            Most of that research is stale. And when they finally reach out — the moment has already passed."
+          </div>
+          <div class="pitch-tip accent">Eye contact. Slow down. Let the pain land.</div>
+        </div>
+      </div>
+
+      <div class="pitch-row">
+        <div class="pitch-time">0:15<div class="duration">10s</div></div>
+        <div class="pitch-body">
+          <div class="pitch-action">🔥 Pivot to the question</div>
+          <div class="pitch-say">
+            "<mark>Most AI tools make up a number and call it a score.</mark>
+            SignalScout computes it from a formula — and every claim traces to a live web source.
+            Let me show you."
+          </div>
+          <div class="pitch-tip">Pause after this. Let it breathe. Do not rush to the demo.</div>
+        </div>
+      </div>
+
+      <div class="pitch-row">
+        <div class="pitch-time">0:25<div class="duration">25s</div></div>
+        <div class="pitch-body">
+          <div class="pitch-action">💻 Start the demo — type slowly, say the company name out loud</div>
+          <div class="pitch-say">
+            "Let me show you. I'll type in <mark>Snowflake</mark>.
+            Watch what happens — this is a live agent pulling data from the public web through Bright Data right now."
+          </div>
+          <div class="pitch-tip warn">Have Snowflake, Ramp, Linear pre-tested. Know which one gives the best live result. Use that one.</div>
+        </div>
+      </div>
+
+      <div class="pitch-row">
+        <div class="pitch-time">0:50<div class="duration">20s</div></div>
+        <div class="pitch-body">
+          <div class="pitch-action">📡 Point to the agent timeline — narrate each step</div>
+          <div class="pitch-say">
+            "SERP API — pulling live news. Web Scraper — structured job data. Web Unlocker — bypassing bot detection on the company blog.
+            <mark>This is not a cached database. This is the live web, right now.</mark>"
+          </div>
+          <div class="pitch-tip accent">Slow your finger across the timeline as you say each tool name. Make judges see each row.</div>
+        </div>
+      </div>
+
+      <div class="pitch-row">
+        <div class="pitch-time">1:10<div class="duration">20s</div></div>
+        <div class="pitch-body">
+          <div class="pitch-action">📊 Why-Now score — the explainable AI moment</div>
+          <div class="pitch-say">
+            "Here's the Why-Now score: <mark>87 out of 100.</mark>
+            But here's what makes this different — scroll down and you see exactly why.
+            Hiring surge. Funding signal. Product launch. This score is <mark>deterministic, not a guess from the AI.</mark>"
+          </div>
+          <div class="pitch-tip accent">Point to the score breakdown component bars. This is your biggest differentiator vs other teams.</div>
+        </div>
+      </div>
+
+      <div class="pitch-row">
+        <div class="pitch-time">1:30<div class="duration">30s</div></div>
+        <div class="pitch-body">
+          <div class="pitch-action">🔍 Evidence Ledger — credibility moment</div>
+          <div class="pitch-say">
+            "Every single insight in this report has an evidence row.
+            Source, title, Bright Data tool used, confidence level.
+            <mark>We don't make unsupported claims.</mark>
+            If the data doesn't exist, the system says: 'Insufficient evidence.' Not a hallucination."
+          </div>
+          <div class="pitch-tip accent">If you have live mode on, point to the green LIVE badge on a row. That one moment is worth 10 slides.</div>
+        </div>
+      </div>
+
+      <div class="pitch-row">
+        <div class="pitch-time">2:00<div class="duration">20s</div></div>
+        <div class="pitch-body">
+          <div class="pitch-action">✉️ Action Pack — the "so what" moment</div>
+          <div class="pitch-say">
+            "The rep doesn't need to write anything. Here's a cold email already personalized to the signals we just found.
+            Here's a LinkedIn message. Here are the three discovery questions for the first call.
+            <mark>Monday morning, they show up to work and this is waiting for them.</mark>"
+          </div>
+          <div class="pitch-tip">Hit the copy button live if it works. Small gestures = big credibility.</div>
+        </div>
+      </div>
+
+      <div class="pitch-row">
+        <div class="pitch-time">2:20<div class="duration">25s</div></div>
+        <div class="pitch-body">
+          <div class="pitch-action">🏗️ Judge Mode — Bright Data moment</div>
+          <div class="pitch-say">
+            "Scroll to the Bright Data Infrastructure panel.
+            SERP API for real-time news. Web Scraper API for structured LinkedIn and review data.
+            Web Unlocker for JS-heavy pages. MCP Server orchestrating all of it.
+            <mark>Every evidence item in the ledger is tagged to the tool that collected it.</mark>"
+          </div>
+          <div class="pitch-tip warn">This panel exists for judges. Make them see it. Don't rush past it.</div>
+        </div>
+      </div>
+
+      <div class="pitch-row">
+        <div class="pitch-time">2:45<div class="duration">15s</div></div>
+        <div class="pitch-body">
+          <div class="pitch-action">🎯 Close — confident, short, no apologies</div>
+          <div class="pitch-say">
+            "<mark>This is not another AI sales dashboard.</mark>
+            This is an auditable GTM timing engine powered by live web data.
+            Every score is computable. Every claim has a source."
+          </div>
+          <div class="pitch-tip accent">Stop talking. Smile. Do NOT say "yeah so that's basically it" or add anything after this.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── KILLER PHRASES ── -->
+  <div class="section">
+    <div class="section-title">Killer Phrases — memorize these 6</div>
+    <div class="phrase-grid">
+
+      <div class="phrase-card key">
+        <div class="phrase-label">The anchor</div>
+        <div class="phrase-text">"Why should you contact this company <strong>right now</strong> — not next month?"</div>
+        <div class="phrase-why">Frames the entire product in one sentence. Say it twice in the demo.</div>
+      </div>
+
+      <div class="phrase-card key">
+        <div class="phrase-label">The differentiator</div>
+        <div class="phrase-text">"Most AI tools make up a score. We <strong>compute one — and show the formula.</strong>"</div>
+        <div class="phrase-why">Every other team will say "AI-powered". You say auditable. That sticks.</div>
+      </div>
+
+      <div class="phrase-card key">
+        <div class="phrase-label">The live data moment</div>
+        <div class="phrase-text">"This is <strong>the live web, right now</strong> — not a cached database."</div>
+        <div class="phrase-why">Say this while pointing to Bright Data tools in the timeline.</div>
+      </div>
+
+      <div class="phrase-card">
+        <div class="phrase-label">The no-BS moment</div>
+        <div class="phrase-text">"If the data doesn't exist, the system says: <strong>'Insufficient evidence.'</strong> Not a hallucination."</div>
+        <div class="phrase-why">Judges are tired of AI that makes stuff up. This builds trust fast.</div>
+      </div>
+
+      <div class="phrase-card">
+        <div class="phrase-label">The enterprise close</div>
+        <div class="phrase-text">"Monday morning, the rep shows up to work <strong>and this is waiting for them.</strong>"</div>
+        <div class="phrase-why">Makes it concrete. Judges should picture a real person using this.</div>
+      </div>
+
+      <div class="phrase-card">
+        <div class="phrase-label">The close</div>
+        <div class="phrase-text">"This is what GTM intelligence looks like <strong>when AI finally has access to the live web.</strong>"</div>
+        <div class="phrase-why">Ties everything back to Bright Data's mission. Judges feel seen.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── LIVE DATA CHECKLIST ── -->
+  <div class="section">
+    <div class="section-title">Live Data Checklist — before demo day</div>
+    <div class="card">
+      <ul class="checklist">
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Claim $250 Bright Data credits on Day 1 kickoff (May 25)</div>
+            <div class="check-desc">Join the kickoff stream. Credits are distributed live. Don't miss this window.</div>
+          </div>
+          <span class="priority critical">Critical</span>
+        </li>
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Set <span class="check-code">BRIGHT_DATA_API_TOKEN</span> in <span class="check-code">backend/.env</span></div>
+            <div class="check-desc">Also set <span class="check-code">USE_MOCK=false</span> and <span class="check-code">BRIGHT_DATA_SERP_ZONE=serp_api1</span></div>
+          </div>
+          <span class="priority critical">Critical</span>
+        </li>
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Test live SERP with 3 demo companies</div>
+            <div class="check-desc">Test: <strong>Ramp</strong>, <strong>Snowflake</strong>, <strong>Linear</strong>. Verify green LIVE badges appear in Evidence Ledger.</div>
+          </div>
+          <span class="priority critical">Critical</span>
+        </li>
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Confirm Evidence Ledger shows <span class="check-code">mode: live</span> rows</div>
+            <div class="check-desc">At least 3–4 green LIVE badge rows per company. This is your visual proof for judges.</div>
+          </div>
+          <span class="priority critical">Critical</span>
+        </li>
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Set <span class="check-code">ANTHROPIC_API_KEY</span> for Claude synthesis</div>
+            <div class="check-desc">Executive summary and action pack will be live-generated. Mode shows HYBRID or LIVE.</div>
+          </div>
+          <span class="priority high">High</span>
+        </li>
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Verify Bright Data Infrastructure panel shows real latency</div>
+            <div class="check-desc">SERP API row should show <span class="check-code">live · 400–900ms</span>, not <span class="check-code">mock · 0ms</span>.</div>
+          </div>
+          <span class="priority high">High</span>
+        </li>
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Deploy to public URL (Vercel + Railway/Render)</div>
+            <div class="check-desc">Frontend → Vercel. Backend → Railway or Render. Test the deployed URL before demo day.</div>
+          </div>
+          <span class="priority high">High</span>
+        </li>
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Record offline demo video (2 min backup)</div>
+            <div class="check-desc">If wifi dies on stage, play the video. Record with live data showing. Caption each step.</div>
+          </div>
+          <span class="priority high">High</span>
+        </li>
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Wire Web Scraper API — LinkedIn job dataset</div>
+            <div class="check-desc">Bright Data has pre-built LinkedIn datasets. Real hiring count = Evidence mode: live. Hiring signal confidence jumps to HIGH.</div>
+          </div>
+          <span class="priority medium">Medium</span>
+        </li>
+
+        <li>
+          <div class="check-box" onclick="this.classList.toggle('done')"></div>
+          <div class="check-content">
+            <div class="check-title">Practice full 3-minute demo 10 times minimum</div>
+            <div class="check-desc">Out loud. With the actual app open. Time yourself. Aim for 2:45. You need buffer.</div>
+          </div>
+          <span class="priority critical">Critical</span>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── WHAT TO IMPROVE ── -->
+  <div class="section">
+    <div class="section-title">What to Improve — current vs better</div>
+    <div class="improve-grid">
+
+      <div class="improve-row improve-now">
+        <div>
+          <div class="improve-label current">Current problem</div>
+          <div class="improve-text">All evidence shows <strong>"demo" badges</strong> in mock mode — judges see it's not real data immediately.</div>
+        </div>
+        <div>
+          <div class="improve-label better">Fix</div>
+          <div class="improve-text">Wire live SERP + set API token. Even 4 live evidence rows with green badges completely changes the perception.</div>
+        </div>
+      </div>
+
+      <div class="improve-row improve-now">
+        <div>
+          <div class="improve-label current">Current problem</div>
+          <div class="improve-text">Hiring signal confidence is <strong>"low"</strong> because it's mock data — judges will notice.</div>
+        </div>
+        <div>
+          <div class="improve-label better">Fix</div>
+          <div class="improve-text">Wire LinkedIn job dataset via Web Scraper API. Real job count → confidence becomes "high" → score visibly changes.</div>
+        </div>
+      </div>
+
+      <div class="improve-row improve-now">
+        <div>
+          <div class="improve-label current">Current problem</div>
+          <div class="improve-text">Executive summary has <strong>"[Note: demo mode]"</strong> text visible — kills credibility mid-demo.</div>
+        </div>
+        <div>
+          <div class="improve-label better">Fix</div>
+          <div class="improve-text">In live mode, Claude generates a clean summary with no demo labels. Priority: get API keys live before demo day.</div>
+        </div>
+      </div>
+
+      <div class="improve-row improve-now">
+        <div>
+          <div class="improve-label current">Current problem</div>
+          <div class="improve-text">Company profile data (size, HQ, industry) is <strong>randomly generated</strong> and not real.</div>
+        </div>
+        <div>
+          <div class="improve-label better">Fix</div>
+          <div class="improve-text">Use SERP API to pull knowledge graph data from Google for real company info. Or use Web Scraper API LinkedIn company dataset.</div>
+        </div>
+      </div>
+
+      <div class="improve-row improve-now">
+        <div>
+          <div class="improve-label current">Current problem</div>
+          <div class="improve-text">Competitor table shows <strong>fake companies</strong> (Hexlane, Mira Cloud) — looks made up.</div>
+        </div>
+        <div>
+          <div class="improve-label better">Fix</div>
+          <div class="improve-text">Add a SERP query: "[company] vs alternatives". Parse organic results. Show real competitor names with real overlap signals.</div>
+        </div>
+      </div>
+
+      <div class="improve-row improve-now">
+        <div>
+          <div class="improve-label current">Current problem</div>
+          <div class="improve-text">Demo pitch doesn't clearly explain <strong>why Bright Data specifically</strong> — could be "any scraper".</div>
+        </div>
+        <div>
+          <div class="improve-label better">Fix</div>
+          <div class="improve-text">Add one line to pitch: "Without Bright Data's bot detection bypass, LinkedIn and JS-heavy pages are inaccessible to agents." Say this while showing Web Unlocker in Judge Mode.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── JUDGE SCORECARD ── -->
+  <div class="section">
+    <div class="section-title">Judge Scorecard — what they look for</div>
+    <div class="judge-grid">
+
+      <div class="judge-item have">
+        <div class="judge-status yes">✓</div>
+        <div>
+          <div class="judge-criterion">Bright Data tool is demonstrably used</div>
+          <div class="judge-note">SERP API wired. Judge Mode panel visible. Evidence tagged per tool. ✅</div>
+        </div>
+      </div>
+
+      <div class="judge-item have">
+        <div class="judge-status yes">✓</div>
+        <div>
+          <div class="judge-criterion">Solves a real enterprise problem</div>
+          <div class="judge-note">GTM research is a $50B+ workflow. Pain is clear and relatable to judges. ✅</div>
+        </div>
+      </div>
+
+      <div class="judge-item have">
+        <div class="judge-status yes">✓</div>
+        <div>
+          <div class="judge-criterion">Working demo (no crashes)</div>
+          <div class="judge-note">Mock mode guarantees cockpit always renders. Fallback is built in. ✅</div>
+        </div>
+      </div>
+
+      <div class="judge-item have">
+        <div class="judge-status yes">✓</div>
+        <div>
+          <div class="judge-criterion">Polished UI</div>
+          <div class="judge-note">Enterprise dark theme. Score rings. Evidence table. Action pack. ✅</div>
+        </div>
+      </div>
+
+      <div class="judge-item">
+        <div class="judge-status partial">~</div>
+        <div>
+          <div class="judge-criterion">Live data clearly visible</div>
+          <div class="judge-note">Needs BRIGHT_DATA_API_TOKEN set. Green LIVE badges not yet showing. <strong>Fix on Day 1.</strong></div>
+        </div>
+      </div>
+
+      <div class="judge-item have">
+        <div class="judge-status yes">✓</div>
+        <div>
+          <div class="judge-criterion">Multiple Bright Data tools used</div>
+          <div class="judge-note">SERP API + Web Unlocker run live in-request. Web Scraper API serves pre-warmed snapshots. MCP server exposes our agent at /mcp. 4 Bright Data surfaces wired.</div>
+        </div>
+      </div>
+
+      <div class="judge-item have">
+        <div class="judge-status yes">✓</div>
+        <div>
+          <div class="judge-criterion">Explainable AI (not a black box)</div>
+          <div class="judge-note">Deterministic scoring. Component breakdown. Evidence ledger. Confidence scores. ✅</div>
+        </div>
+      </div>
+
+      <div class="judge-item have">
+        <div class="judge-status yes">✓</div>
+        <div>
+          <div class="judge-criterion">Cross-track relevance</div>
+          <div class="judge-note">GTM (primary) + Finance signals (hiring/funding trends). Covers 2 tracks. ✅</div>
+        </div>
+      </div>
+
+      <div class="judge-item">
+        <div class="judge-status no">!</div>
+        <div>
+          <div class="judge-criterion">Strong submission writeup</div>
+          <div class="judge-note">README is good but submission form needs: problem → solution → Bright Data why → impact. Write this on Day 5.</div>
+        </div>
+      </div>
+
+      <div class="judge-item">
+        <div class="judge-status partial">~</div>
+        <div>
+          <div class="judge-criterion">Startup Program potential</div>
+          <div class="judge-note">Pitch the scalability: "This workflow runs on any company, at scale, continuously." Say this in your submission text.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center; color: var(--ink-dim); font-size:11px; padding-top: 32px; border-top: 1px solid var(--line);">
+    SignalScout AI · Bright Data Web Data UNLOCKED Hackathon · May 25–31 2026<br>
+    <span style="color: var(--accent)">Memorize the pitch. Get the API token. Win the $5K.</span>
+  </div>
+
+</div>
+
+<script>
+  // Persist checkbox state in localStorage
+  document.querySelectorAll('.check-box').forEach((box, i) => {
+    const key = 'check_' + i;
+    if (localStorage.getItem(key) === 'done') box.classList.add('done');
+    box.addEventListener('click', () => {
+      localStorage.setItem(key, box.classList.contains('done') ? 'done' : '');
+    });
+  });
+</script>
+</body>
+</html>

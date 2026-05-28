@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  background: #07090d;
+  color: #e6edf7;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(124,240,200,0.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(106,169,255,0.05), transparent 60%),
+    #07090d;
+  font-feature-settings: "ss01", "cv11";
+}
+
+::selection {
+  background: rgba(124, 240, 200, 0.25);
+}
+
+.grid-fade {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  -webkit-mask-image: radial-gradient(ellipse at top, black 30%, transparent 80%);
+          mask-image: radial-gradient(ellipse at top, black 30%, transparent 80%);
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00)) , #0f1521;
+  border: 1px solid #1a2235;
+  border-radius: 14px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #1a2235;
+  color: #8b97ad;
+  background: #0c1118;
+}
+
+.kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: #8b97ad;
+  background: #0c1118;
+  border: 1px solid #1a2235;
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 2px 6px;
+}
