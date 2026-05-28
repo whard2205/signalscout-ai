@@ -23,7 +23,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, List, Optional
-from urllib.parse import urlparse
+from urllib.parse import quote_plus, urlparse
 
 import httpx
 
@@ -118,6 +118,108 @@ def _date_from_extensions(extensions: Any) -> str | None:
 BD_API_BASE = "https://api.brightdata.com"
 
 
+_KNOWN_COMPANY_CONTEXT: dict[str, dict[str, tuple[str, ...]]] = {
+    "bank central asia": {
+        "aliases": ("bank central asia", "bca", "pt bank central asia", "bbca"),
+        "domains": ("bca.co.id",),
+        "context": ("indonesia", "indonesian", "jakarta"),
+    },
+    "bca": {
+        "aliases": ("bank central asia", "bca", "pt bank central asia", "bbca"),
+        "domains": ("bca.co.id",),
+        "context": ("indonesia", "indonesian", "jakarta"),
+    },
+    "telkomsel": {
+        "aliases": ("telkomsel", "pt telekomunikasi selular"),
+        "domains": ("telkomsel.com",),
+        "context": ("indonesia", "indonesian", "jakarta", "telco", "telecom"),
+    },
+    "openai": {
+        "aliases": ("openai", "open ai"),
+        "domains": ("openai.com",),
+        "context": ("artificial intelligence", "ai"),
+    },
+}
+
+
+def _company_key(company: str) -> str:
+    return _re.sub(r"[^a-z0-9]+", " ", company.lower()).strip()
+
+
+def _company_context(company: str) -> dict[str, tuple[str, ...]]:
+    key = _company_key(company)
+    return _KNOWN_COMPANY_CONTEXT.get(key, {
+        "aliases": (company.lower(),),
+        "domains": (),
+        "context": (),
+    })
+
+
+def _has_known_context(company: str) -> bool:
+    return _company_key(company) in _KNOWN_COMPANY_CONTEXT
+
+
+def _target_aliases(company: str) -> tuple[str, ...]:
+    ctx = _company_context(company)
+    aliases = [a.strip().lower() for a in ctx["aliases"] if a.strip()]
+    raw = company.strip().lower()
+    if raw and raw not in aliases:
+        aliases.insert(0, raw)
+    return tuple(aliases)
+
+
+def _target_domains(company: str) -> tuple[str, ...]:
+    return _company_context(company)["domains"]
+
+
+def _quoted(s: str) -> str:
+    return f'"{s}"'
+
+
+def _build_news_query(company: str) -> str:
+    ctx = _company_context(company)
+    aliases = _target_aliases(company)
+    alias_part = " OR ".join(_quoted(a) for a in aliases[:3])
+    context_part = " ".join(ctx["context"][:2])
+    return (
+        f"({alias_part}) {context_part} latest news funding product launch "
+        f"{_current_year()} recent"
+    ).strip()
+
+
+def _build_competitor_query(company: str) -> str:
+    ctx = _company_context(company)
+    aliases = _target_aliases(company)
+    alias_part = " OR ".join(_quoted(a) for a in aliases[:2])
+    context_part = " ".join(ctx["context"][:2])
+    return f"({alias_part}) {context_part} competitors alternatives".strip()
+
+
+def _mentions_target_company(company: str, title: str, snippet: str, url: str = "") -> bool:
+    """True only when a SERP result is actually about the requested company.
+
+    This prevents ambiguous names such as "Bank Central Asia" from matching
+    generic "Central Asia" regional news, and prevents competitor pages for a
+    different market from polluting Telkomsel-style queries.
+    """
+    host = _extract_domain(url) if url else ""
+    if host and any(host == d or host.endswith("." + d) for d in _target_domains(company)):
+        return True
+
+    text = f"{title} {snippet}".lower()
+    for alias in _target_aliases(company):
+        if len(alias) < 3:
+            continue
+        pattern = r"(?<![a-z0-9])" + _re.escape(alias) + r"(?![a-z0-9])"
+        if _re.search(pattern, text):
+            return True
+
+    # Generic fallback: for multi-word companies, require the full normalized
+    # phrase. Do not accept partial token overlap (e.g. "Central Asia").
+    phrase = _company_key(company)
+    return bool(phrase and phrase in _company_key(text))
+
+
 # ── Config ──────────────────────────────────────────────────────────────────
 
 @dataclass
@@ -158,6 +260,7 @@ _SKIP_DOMAINS: frozenset[str] = frozenset({
     # Research / data aggregators
     "semrush.com", "similarweb.com", "cbinsights.com", "bullfincher.io",
     "owler.com", "marketing91.com", "tracxn.com", "growjo.com",
+    "example.com", "example.org", "example.net",
     "craft.co", "pitchbook.com", "crunchbase.com",
     # News / press
     "pcmag.com", "techradar.com", "forbes.com", "techcrunch.com",
@@ -561,6 +664,7 @@ def _parse_competitor_serp_response(raw: Any, company: str) -> list[dict]:
     strong: list[dict] = []     # Pass 1 — explicit competitor lists
     weak: list[dict] = []       # Pass 2 — domain-only fallback
     seen: set[str] = set()
+    strong_source_urls: set[str] = set()
     company_lower = company.lower()
 
     # Pass 1 (PRIMARY): scan snippets for explicit competitor lists.
@@ -570,10 +674,14 @@ def _parse_competitor_serp_response(raw: Any, company: str) -> list[dict]:
         snippet = result.get("description", result.get("snippet", "")) or ""
         title = result.get("title", "") or ""
         url = result.get("link", "")
+        if not _mentions_target_company(company, title, snippet, url):
+            continue
         names_in_snippet = _extract_competitors_from_snippet(
             snippet + " " + title, company, seen,
         )
         for name in names_in_snippet:
+            if url:
+                strong_source_urls.add(url)
             strong.append({
                 "name": name,
                 "overlap": _infer_overlap(snippet + " " + title, company),
@@ -595,7 +703,11 @@ def _parse_competitor_serp_response(raw: Any, company: str) -> list[dict]:
         snippet = result.get("description", result.get("snippet", ""))
         domain = _extract_domain(url) if url else ""
 
+        if url and url in strong_source_urls:
+            continue
         if not domain or domain in _SKIP_DOMAINS:
+            continue
+        if _has_known_context(company) and not _mentions_target_company(company, title, snippet, ""):
             continue
         name = _domain_to_name(domain)
         if not name or name.lower() in seen:
@@ -814,6 +926,8 @@ def _parse_serp_response(raw: Any, company: str) -> list[dict]:
              confidence: str, idx: int) -> None:
         if not title and not snippet:
             return
+        if not _mentions_target_company(company, title, snippet, url):
+            return
         url = url or ""
         if url in seen_urls:
             return
@@ -902,10 +1016,7 @@ class BrightDataClient:
         # Recency-biased query — uses the CURRENT year dynamically so the system
         # doesn't go stale next year. Google ranks fresh results higher when
         # 'latest' and 'recent' appear alongside the current year.
-        query = (
-            f"{company} latest news funding product launch "
-            f"{_current_year()} recent"
-        )
+        query = _build_news_query(company)
         t0 = time.perf_counter()
         try:
             async with httpx.AsyncClient(timeout=25.0) as client:
@@ -914,7 +1025,7 @@ class BrightDataClient:
                     headers={"Authorization": f"Bearer {self.cfg.token}"},
                     json={
                         "zone": self.cfg.serp_zone,
-                        "url": f"https://www.google.com/search?q={query.replace(' ', '+')}&brd_json=1",
+                        "url": f"https://www.google.com/search?q={quote_plus(query)}&brd_json=1",
                         "format": "json",
                     },
                 )
@@ -939,7 +1050,7 @@ class BrightDataClient:
         if not self.is_live:
             return [], 0, "mock"
 
-        query = f"{company} alternatives competitors"
+        query = _build_competitor_query(company)
         t0 = time.perf_counter()
         try:
             async with httpx.AsyncClient(timeout=25.0) as client:
@@ -948,7 +1059,7 @@ class BrightDataClient:
                     headers={"Authorization": f"Bearer {self.cfg.token}"},
                     json={
                         "zone": self.cfg.serp_zone,
-                        "url": f"https://www.google.com/search?q={query.replace(' ', '+')}&brd_json=1",
+                        "url": f"https://www.google.com/search?q={quote_plus(query)}&brd_json=1",
                         "format": "json",
                     },
                 )

@@ -287,7 +287,7 @@ function ExecSummary({ report }: { report: AnalyzeResponse }) {
         </div>
         <div className="mt-4 flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-ink-muted flex-wrap">
           <Sparkles className="h-3 w-3 text-accent" />
-          <span>Synthesized by Claude · evidence-grounded</span>
+          <span>Synthesized by {providerLabel(report.llm_provider)} · evidence-grounded</span>
           <span className="text-ink-dim">· scores deterministic (scoring.py)</span>
           {report.generated_at && (
             <span className="text-ink-dim ml-auto">
@@ -299,6 +299,12 @@ function ExecSummary({ report }: { report: AnalyzeResponse }) {
       </CardBody>
     </Card>
   );
+}
+
+function providerLabel(provider: AnalyzeResponse["llm_provider"]): string {
+  if (provider === "claude") return "Claude";
+  if (provider === "mimo") return "MiMo";
+  return "deterministic fallback";
 }
 
 function formatRelativeNow(iso: string): string {

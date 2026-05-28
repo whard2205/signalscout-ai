@@ -407,6 +407,15 @@ async def _build_response(company: str) -> AnalyzeResponse:
     if has_any_live:
         base.evidence = [e for e in base.evidence if e.mode == "live"]
         base.signals = []  # _inject_live_signals (step 6) will fill from live evidence
+    elif bd.is_live:
+        for e in base.evidence:
+            e.mode = "fallback"
+            e.confidence = "low"
+            e.source_title = _strip_demo_markers(e.source_title or "")
+            e.summary = _strip_demo_markers(e.summary)
+        for c in base.competitors:
+            c.mode = "fallback"
+            c.threat = "low"
 
     # 4b. Web Unlocker chain — fetch top live article for full text extraction.
     #     Demonstrates tool chaining: SERP discovers URL → Unlocker bypasses paywall/JS.
@@ -610,7 +619,7 @@ async def _build_response(company: str) -> AnalyzeResponse:
     if has_live_serp and has_llm:
         base.mode = "live"
     elif has_live_serp or has_llm:
-        base.mode = "hybrid"
+        base.mode = "hybrid" if has_any_live else "fallback"
     elif serp_status in ("fallback", "error"):
         base.mode = "fallback"
     else:

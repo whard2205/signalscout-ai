@@ -37,9 +37,16 @@ def _profile(company: str, rng: random.Random) -> CompanyProfile:
     industries = ["B2B SaaS", "Fintech", "Cybersecurity", "DevTools", "Data Infrastructure", "MarTech"]
     sizes = ["51-200", "201-500", "501-1000", "1001-5000"]
     hqs = ["San Francisco, CA", "New York, NY", "London, UK", "Berlin, DE", "Singapore"]
+    known_domains = {
+        "bank central asia": "bca.co.id",
+        "bca": "bca.co.id",
+        "telkomsel": "telkomsel.com",
+        "openai": "openai.com",
+    }
+    domain = known_domains.get(company.lower().strip(), f"{company.lower().replace(' ', '')}.com")
     return CompanyProfile(
         name=company,
-        domain=f"{company.lower().replace(' ', '')}.com",
+        domain=domain,
         industry=rng.choice(industries),
         hq=rng.choice(hqs),
         size=rng.choice(sizes),

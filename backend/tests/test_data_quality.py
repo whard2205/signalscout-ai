@@ -229,6 +229,52 @@ def test_competitor_extraction_drops_geography_competitor() -> None:
     assert out == [], f"Expected [] (all junk geo), got {out}"
 
 
+def test_bank_central_asia_serp_rejects_central_asia_region_noise() -> None:
+    """BCA must not match generic Central Asia regional development news."""
+    from app.services.bright_data import _parse_serp_response
+
+    raw_body = {
+        "organic": [
+            {
+                "link": "https://www.ebrd.com/news/central-asia-investment",
+                "title": "EBRD invests almost US$ 2 billion in Central Asia and Mongolia",
+                "description": "Central Asia infrastructure investment program expands.",
+            },
+            {
+                "link": "https://www.bca.co.id/report.pdf",
+                "title": "PT Bank Central Asia Tbk - 1Q26 Results",
+                "description": "BCA reports quarterly performance.",
+            },
+        ],
+    }
+    out = _parse_serp_response(_wrap_bd(raw_body), "Bank Central Asia")
+    assert len(out) == 1
+    assert out[0]["source"] == "bca.co.id"
+    assert "EBRD" not in out[0]["source_title"]
+
+
+def test_telkomsel_competitors_reject_off_market_charter_noise() -> None:
+    """Telkomsel competitor results must mention Telkomsel, not generic US telco lists."""
+    raw_body = {
+        "organic": [
+            {
+                "link": "https://example.com/charter",
+                "title": "Charter Communications competitors",
+                "description": "Charter competitors include Comcast, Verizon, AT&T.",
+            },
+            {
+                "link": "https://example.com/telkomsel-competitors",
+                "title": "Telkomsel competitors include Indosat, XL Axiata, Smartfren",
+                "description": "Telkomsel competitors include Indosat, XL Axiata, Smartfren in Indonesia.",
+            },
+        ],
+    }
+    out = _parse_competitor_serp_response(_wrap_bd(raw_body), "Telkomsel")
+    names = {row["name"] for row in out}
+    assert {"Indosat", "XL Axiata", "Smartfren"}.issubset(names)
+    assert "Charter Communications" not in names
+
+
 # ── COMPETITOR_THREAT SCORING RESPECTS QUALITY ───────────────────────────────
 
 def test_no_competitor_evidence_keeps_threat_at_baseline() -> None:
