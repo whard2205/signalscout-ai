@@ -56,18 +56,18 @@ starting points exposed for audit and tuning by sales-ops teams.
 
 - **Reference**: 6sense intent-data and buying-stage docs.
   [Predictive Buying Stages](https://support.6sense.com/docs/predictive-buying-stages)
-- **Framing**: Documents how hiring, content consumption, and competitor evaluation
-  signal different buying-cycle stages.
-- **Our application**: hiring carries the highest `buying_intent` weight in our table.
+- **Framing**: Documents how observed research/activity signals map accounts into
+  buying-cycle stages.
+- **Our application**: supports our general stage-based treatment of public signals;
+  it does not calibrate any exact SignalScout weight.
 
 ### 2.3 Forrester / SiriusDecisions Demand Unit Waterfall
 
 - **Reference**: Forrester B2B revenue framework (acquired SiriusDecisions in 2019).
   [Forrester investor materials](https://investor.forrester.com/node/14636/pdf)
-- **Framing**: A B2B buyer-journey framework that separates awareness-stage signals
-  (news) from late-funnel signals (expansion, competitive switching).
-- **Our application**: `news` and `expansion` sit at mid-weight; `competitor` weight
-  pulls heavily toward the `competitor_threat` dimension rather than `why_now`.
+- **Framing**: A B2B demand-unit / buyer-journey framework.
+- **Our application**: supports the idea that account activity should be separated
+  by journey stage; it does not provide exact weights for expansion or competitors.
 
 ### 2.4 Demandbase Intent-Data Overview
 
@@ -82,12 +82,10 @@ starting points exposed for audit and tuning by sales-ops teams.
 
 - **Reference**: Bombora Company Surge intent-data overview.
   [Bombora Intent Data](https://bombora.com/company-surge/)
-- **Framing**: B2B intent-data co-op describing how hiring-adjacent activity
-  and content-consumption surges signal buyer intent. We reference it as one
-  of several frameworks that informs the ordering of intent signal types.
-- **Our application**: informs the weight ordering between `hiring` and
-  `news`/`product`. We do not import or replicate Bombora's proprietary
-  scoring data — we only reference their published taxonomy.
+- **Framing**: B2B intent-data co-op describing account-level topic research and
+  content-consumption surges.
+- **Our application**: supports the idea of account-level signal surges. We do not
+  import or replicate Bombora's proprietary scoring data.
 
 > **Important framing**: we do NOT claim our exact weight values (0.22, 0.18, etc.)
 > are derived from these sources or empirically calibrated against private vendor
@@ -101,9 +99,9 @@ starting points exposed for audit and tuning by sales-ops teams.
 | Signal | why_now | buying_intent | expansion_signal | competitor_threat | Primary citation |
 |---|---|---|---|---|---|
 | funding | 0.22 | 0.20 | 0.20 | — | Elias 2009 |
-| hiring | 0.18 | 0.25 | 0.10 | — | Bombora 2023 |
-| product | 0.18 | — | 0.22 | — | 6sense |
-| expansion | 0.10 | — | 0.22 | — | Forrester |
+| hiring | 0.18 | 0.25 | 0.10 | — | GTM heuristic |
+| product | 0.18 | — | 0.22 | — | 6sense / Demandbase |
+| expansion | 0.10 | — | 0.22 | — | Forrester framing |
 | news | 0.10 | — | 0.08 | — | Demandbase |
 | competitor | 0.08 | — | — | 0.35 | Gartner CHAMP |
 | pricing | 0.05 | — | — | 0.18 | Gartner CHAMP |

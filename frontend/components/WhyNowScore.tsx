@@ -113,12 +113,12 @@ export function WhyNowScore({ scores, reason }: { scores: Scores; reason: string
 // Per-signal positioning — each weight maps to a B2B intent-data framework
 // that ORDERS this signal kind, not a claim about exact numeric calibration.
 const SIGNAL_CITATIONS: Record<string, { weight: string; cite: string; cite_short: string }> = {
-  hiring:     { weight: "0.18", cite: "6sense buying stages — hiring surge is a documented late-funnel intent signal",                                  cite_short: "6sense" },
-  funding:    { weight: "0.22", cite: "Trigger Event Selling (Elias) — funding/leadership change as top timing trigger in B2B",                          cite_short: "Elias" },
-  product:    { weight: "0.18", cite: "Common B2B intent frameworks — product launches indicate ecosystem activity / vendor refresh",                    cite_short: "6sense" },
-  news:       { weight: "0.10", cite: "Awareness-stage signal in standard buyer-journey models (Forrester/SiriusDecisions)",                             cite_short: "Forrester" },
-  expansion:  { weight: "0.10", cite: "Forrester Demand Unit Waterfall — late-funnel expansion signals carry mid-tier weight",                           cite_short: "Forrester" },
-  competitor: { weight: "0.08", cite: "Mid-funnel competitive evaluation — weight tilts toward competitor_threat dimension, not why_now",                 cite_short: "B2B GTM" },
+  hiring:     { weight: "0.18", cite: "Operational expansion trigger — treated as strong context, not a vendor-calibrated intent score",                  cite_short: "GTM heuristic" },
+  funding:    { weight: "0.22", cite: "Trigger Event Selling (Elias) — funding/leadership change as high-value timing triggers",                         cite_short: "Elias" },
+  product:    { weight: "0.18", cite: "Product launch / category activity — mapped to buyer-journey and intent-data frameworks",                         cite_short: "6sense/Demandbase" },
+  news:       { weight: "0.10", cite: "Awareness-stage activity — content/news consumption is a lower-weight context signal",                            cite_short: "Demandbase" },
+  expansion:  { weight: "0.10", cite: "Demand-unit / account expansion framing — mid-weight until stronger intent appears",                              cite_short: "Forrester" },
+  competitor: { weight: "0.08", cite: "Competitive evaluation context — weighted mainly in competitor_threat, not why_now",                               cite_short: "B2B GTM" },
 };
 
 const RESEARCH_REFS = [
@@ -130,7 +130,7 @@ const RESEARCH_REFS = [
   {
     short: "6sense",
     full:  "6sense intent-data documentation",
-    note:  "Buying-stage signals: hiring, content consumption, competitor evaluation.",
+    note:  "Buying-stage framing: accounts move from awareness to purchase based on observed research/activity signals.",
   },
   {
     short: "Forrester",
@@ -145,7 +145,7 @@ const RESEARCH_REFS = [
   {
     short: "Bombora",
     full:  "Bombora Company Surge intent-data overview",
-    note:  "B2B intent-data co-op describing hiring-adjacent and content-consumption signals.",
+    note:  "B2B intent-data co-op describing account-level topic research and content-consumption surges.",
   },
 ];
 
