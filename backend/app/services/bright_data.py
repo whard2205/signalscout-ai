@@ -332,6 +332,7 @@ _NOT_COMPANY_HARD = frozenset({
     "top", "best", "alternatives", "competitors", "rivals",
     "guide", "review", "reviews", "pricing", "stock", "news",
     "market", "here", "watch list", "guide to", "list of",
+    "artificial intelligence", "artificialintelligence", "artificialinteligence",
     "main", "key", "leading", "popular", "more", "other",
     "this year", "this month", "this week", "today",
     "options", "vendors", "tools", "platforms", "solutions",
@@ -892,6 +893,8 @@ _SIGNAL_PATTERNS: list[tuple[str, list[str]]] = [
         r"\bcsr report\b", r"\bsustainability page\b",
         r"\bfinance framework\b", r"\bfinancing framework\b",
         r"\binvestment program\b", r"\binvestor day\b",
+        r"\bfinancial community\b", r"\bupcoming events\b",
+        r"\bpresent at (?:the )?following events\b",
     ]),
     ("expansion", [
         # "investing in X" / "investing $5B in X" / "invests in" / "investments in"

@@ -52,14 +52,26 @@ router = APIRouter()
 
 
 def _compute_evidence_hash(evidence: list[Evidence], scores) -> str:
-    """SHA256 of (evidence IDs+tools+modes) + score values.
+    """SHA256 of evidence payload + score values.
 
-    Same input → same hash. If two runs produce the same hash, the entire
-    pipeline (data + scoring) was deterministic. Judge-verifiable proof.
+    Same evidence payload + same scores -> same hash. Source/title/url/summary
+    are included so changed live content cannot hide behind stable row IDs.
     """
     h = hashlib.sha256()
     for e in evidence:
-        h.update(f"{e.id}|{e.tool}|{e.mode}|{e.signal}".encode("utf-8"))
+        payload = {
+            "id": e.id,
+            "tool": e.tool,
+            "mode": e.mode,
+            "signal": e.signal,
+            "source": e.source,
+            "source_title": e.source_title,
+            "url": e.url,
+            "summary": e.summary,
+            "confidence": e.confidence,
+            "tier": e.tier,
+        }
+        h.update(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode("utf-8"))
     for key in ("why_now", "buying_intent", "expansion_signal", "competitor_threat"):
         s = getattr(scores, key)
         h.update(f"{key}={s.value}".encode("utf-8"))
@@ -198,7 +210,7 @@ def _live_action_pack(company: str, evidence: list[Evidence],
     # Pick the strongest anchor + classify what KIND of trigger this is.
     # We use trigger_kind to pick the right cold-email language — never claim
     # "post-round" if there's no real funding event.
-    anchor_ev = funding_ev or product_ev or expansion_ev or hiring_ev or news_ev
+    anchor_ev = funding_ev or expansion_ev or product_ev or hiring_ev or news_ev
     if anchor_ev:
         raw_anchor = anchor_ev.source_title or anchor_ev.summary[:60]
         anchor = _clean_anchor_for_outreach(raw_anchor)
@@ -241,12 +253,36 @@ def _live_action_pack(company: str, evidence: list[Evidence],
     if not angles:
         angles = [f"Outreach context: {anchor}."]
 
+    body_by_kind = {
+        "funding": (
+            "Teams hitting this growth stage usually face the same constraint: "
+            "GTM capacity needs to scale faster than headcount."
+        ),
+        "expansion": (
+            "Teams entering new partnerships or infrastructure buildouts usually "
+            "need cleaner vendor coordination and faster operating visibility."
+        ),
+        "product": (
+            "Teams shipping public roadmap updates usually need supporting GTM "
+            "and operations workflows to keep pace."
+        ),
+        "hiring": (
+            "Teams expanding headcount usually need repeatable processes before "
+            "new hires fully ramp."
+        ),
+        "news": (
+            "Teams with fresh public momentum usually need a faster way to turn "
+            "that activity into pipeline priorities."
+        ),
+    }
+    body_line = body_by_kind.get(trigger_kind, body_by_kind["news"])
+
     # Cold email — language matches the actual trigger
     cold_email = (
         f"Subject: {subject}\n\n"
         f"Hi [Name],\n\n"
-        f"Saw the news — {anchor}. Teams hitting this growth stage usually "
-        f"face the same constraint: GTM capacity needs to scale faster than headcount.\n\n"
+        f"Saw the news — {anchor}. "
+        f"{body_line}\n\n"
         f"We help teams in this exact moment shorten time-to-value without "
         f"standing up a new ops layer. Worth a 15-minute look?\n\n"
         f"— [Your Name]"
@@ -935,7 +971,7 @@ async def transparency() -> dict:
                 "Generate evidence",
                 "Compute confidence",
             ],
-            "providers_cascade": ["Claude Sonnet 4.6 (primary)", "MiMo v2.5 (failover)", "mock template (last resort)"],
+            "providers_cascade": ["Claude Haiku 4.5 (primary, configurable)", "MiMo v2.5 (failover)", "mock template (last resort)"],
         },
         "bright_data_tools_used": {
             "SERP API":         "LIVE in request — news/funding/product signals + competitor discovery (2 concurrent queries)",
@@ -955,8 +991,8 @@ async def transparency() -> dict:
             "GET /health":           "Liveness check",
         },
         "reproducibility": {
-            "method": "Every /analyze response carries an evidence_hash (SHA256 of evidence IDs + scores). Re-run with same input → same hash.",
-            "verify_command": "Run /analyze twice for same company → compare evidence_hash fields.",
+            "method": "Every /analyze response carries an evidence_hash (SHA256 of evidence payload + score values). Same evidence + same scores → same hash.",
+            "verify_command": "Run /analyze twice for the same cached company or payload → compare evidence_hash fields.",
         },
     }
 

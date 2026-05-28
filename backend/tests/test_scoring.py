@@ -22,6 +22,7 @@ from app.services.scoring import (
     SIGNAL_WEIGHTS,
     compute_scores,
 )
+from app.api.routes import _compute_evidence_hash
 
 
 def _ev(eid: str, signal: str, mode: str = "live", conf: str = "high",
@@ -38,6 +39,17 @@ def _sig(kind: str, evidence_ids: list[str], impact: str = "positive") -> Signal
         kind=kind, title=f"{kind} signal", detail="test", impact=impact,  # type: ignore[arg-type]
         evidence_ids=evidence_ids,
     )
+
+
+def test_evidence_hash_changes_when_evidence_content_changes():
+    """Hash should reflect evidence payload, not just stable row IDs."""
+    ev1 = _ev("live_1", "news")
+    ev2 = _ev("live_1", "news")
+    ev2.summary = "changed source content"
+    scores1 = compute_scores([_sig("news", ["live_1"])], [ev1])
+    scores2 = compute_scores([_sig("news", ["live_1"])], [ev2])
+
+    assert _compute_evidence_hash([ev1], scores1) != _compute_evidence_hash([ev2], scores2)
 
 
 # ── DETERMINISM ─────────────────────────────────────────────────────────────

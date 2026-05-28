@@ -345,7 +345,7 @@ function buildGtmBrief(report: AnalyzeResponse): string {
     lines.push(`LLM Provider:         ${r.llm_provider}`);
   }
   if (r.evidence_hash) {
-    lines.push(`Evidence Hash:        ${r.evidence_hash}  (deterministic — same input → same hash)`);
+    lines.push(`Evidence Hash:        ${r.evidence_hash}  (deterministic — same evidence → same hash)`);
   }
   lines.push("");
 

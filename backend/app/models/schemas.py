@@ -133,5 +133,5 @@ class AnalyzeResponse(BaseModel):
     infra: List[InfraCall]
     mode: ReportMode
     llm_provider: LLMProvider = "none"
-    evidence_hash: Optional[str] = None  # SHA256 of evidence IDs+tools — proves determinism
+    evidence_hash: Optional[str] = None  # SHA256 of evidence payload + score values
     generated_at: str

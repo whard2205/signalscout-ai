@@ -88,7 +88,7 @@ export function EvidenceLedger({ evidence, evidenceHash }: { evidence: Evidence[
         )}
         {evidenceHash && (
           <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-t border-line/60 text-[10.5px] text-ink-dim font-mono"
-            title="SHA256 of evidence IDs + scores. Same input → same hash. Proves deterministic output.">
+            title="SHA256 of evidence payload + score values. Same evidence + same score means same hash.">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="h-3 w-3 text-accent" />
               Reproducibility hash

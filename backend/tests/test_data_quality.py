@@ -36,6 +36,7 @@ from app.services.bright_data import (
     "Companies",
     "Alternatives",
     "Competitors",
+    "ArtificialInteligence",
     "Read More",
     "Learn More",
     "Click Here",
@@ -446,6 +447,8 @@ def test_parse_competitor_serp_response_empty_when_low_confidence() -> None:
     ("Operating income up 22% in latest filing",     "news"),
     ("10-Q filed with SEC",                          "news"),
     ("Quarterly earnings report disappoints",        "news"),
+    ("NVIDIA will present at the following events for the financial community", "news"),
+    ("NVIDIA announces upcoming events for financial community", "news"),
     # Expansion (NOT funding)
     ("NVIDIA investing in UK AI infrastructure",      "expansion"),
     ("Tesla investing $5B in new factory",            "expansion"),

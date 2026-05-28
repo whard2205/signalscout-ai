@@ -6,12 +6,12 @@ import { ShieldCheck } from "lucide-react";
 const SIGNAL_WEIGHTS: Record<string, Record<string, number>> = {
   hiring:     { "Why-Now": 0.18, "Buying Intent": 0.25, "Expansion": 0.10 },
   funding:    { "Why-Now": 0.22, "Buying Intent": 0.20, "Expansion": 0.20 },
-  product:    { "Why-Now": 0.18, "Expansion": 0.22 },
+  product:    { "Why-Now": 0.18, "Expansion": 0.22, "Buying Intent": 0.08 },
   news:       { "Why-Now": 0.10, "Expansion": 0.08 },
   competitor: { "Competitor Threat": 0.35, "Why-Now": 0.08 },
   pricing:    { "Competitor Threat": 0.18, "Why-Now": 0.05 },
   review:     { "Competitor Threat": 0.10, "Buying Intent": 0.05 },
-  expansion:  { "Expansion": 0.22, "Why-Now": 0.10 },
+  expansion:  { "Expansion": 0.22, "Why-Now": 0.10, "Buying Intent": 0.06 },
 };
 
 export function AuditTrail({

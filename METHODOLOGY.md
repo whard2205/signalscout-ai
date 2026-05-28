@@ -100,8 +100,8 @@ starting points exposed for audit and tuning by sales-ops teams.
 |---|---|---|---|---|---|
 | funding | 0.22 | 0.20 | 0.20 | — | Elias 2009 |
 | hiring | 0.18 | 0.25 | 0.10 | — | GTM heuristic |
-| product | 0.18 | — | 0.22 | — | 6sense / Demandbase |
-| expansion | 0.10 | — | 0.22 | — | Forrester framing |
+| product | 0.18 | 0.08 | 0.22 | — | 6sense / Demandbase |
+| expansion | 0.10 | 0.06 | 0.22 | — | Forrester framing |
 | news | 0.10 | — | 0.08 | — | Demandbase |
 | competitor | 0.08 | — | — | 0.35 | Gartner CHAMP |
 | pricing | 0.05 | — | — | 0.18 | Gartner CHAMP |
@@ -127,15 +127,16 @@ weights — those reflect domain research, not data freshness.
 ## 5. Reproducibility
 
 Every `/analyze` response includes an `evidence_hash` field — the first 16 hex chars
-of `SHA256(evidence IDs + scores)`. Two runs with the same input return the same hash.
-This is the audit-grade proof that the pipeline is deterministic.
+of `SHA256(evidence payload + score values)`. Two runs with the same evidence payload
+and score values return the same hash. This is the audit-grade proof that the scored
+output is reproducible without letting changed source content hide behind stable IDs.
 
 Run the unit tests yourself:
 
 ```bash
 cd backend
 python -m pytest tests/ -v
-# expected: 12 passed in <1s
+# expected: 213 passed in <1s
 ```
 
 Tests verify:
