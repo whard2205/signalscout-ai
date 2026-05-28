@@ -443,14 +443,14 @@ function DemoTips() {
     <Card>
       <CardBody className="text-[12.5px] text-ink-muted leading-relaxed">
         <div className="text-[11px] uppercase tracking-[0.16em] text-ink mb-2">
-          Demo cheatsheet
+          Recommended Flow
         </div>
         <ol className="list-decimal pl-4 space-y-1">
-          <li>Enter a company — watch the timeline stream Bright Data calls.</li>
-          <li>Point to the Why-Now score; explain it's deterministic, not LLM.</li>
-          <li>Open the Evidence Ledger — every claim has a source + tool.</li>
-          <li>Show the Bright Data Infrastructure panel for the judges.</li>
-          <li>Copy the cold email; close.</li>
+          <li>Enter a company and watch live evidence collection.</li>
+          <li>Review the deterministic Why-Now score.</li>
+          <li>Open the Evidence Ledger to verify claims.</li>
+          <li>Inspect Bright Data infrastructure usage.</li>
+          <li>Copy the action pack for outreach.</li>
         </ol>
       </CardBody>
     </Card>
