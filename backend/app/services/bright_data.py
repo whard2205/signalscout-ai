@@ -667,9 +667,15 @@ def _parse_competitor_serp_response(raw: Any, company: str) -> list[dict]:
     strong_source_urls: set[str] = set()
     company_lower = company.lower()
 
+    # Cap raised from 5 to 8 so scoring can differentiate competitively-dense
+    # companies (saturated retail/e-comm: 8 strong) from niche markets
+    # (specialist verticals: 2-4 strong). UI displays only top-5 visually
+    # ("+N more used in scoring") — see CompetitorTable.tsx.
+    _MAX = 8
+
     # Pass 1 (PRIMARY): scan snippets for explicit competitor lists.
-    for result in raw.get("organic", [])[:12]:
-        if len(strong) >= 5:
+    for result in raw.get("organic", [])[:14]:
+        if len(strong) >= _MAX:
             break
         snippet = result.get("description", result.get("snippet", "")) or ""
         title = result.get("title", "") or ""
@@ -691,12 +697,12 @@ def _parse_competitor_serp_response(raw: Any, company: str) -> list[dict]:
                 "source_url": url or None,
                 "source_title": title or None,
             })
-            if len(strong) >= 5:
+            if len(strong) >= _MAX:
                 break
 
     # Pass 2 (FALLBACK): organic result domains (B2B SaaS competitor homepages).
-    for result in raw.get("organic", [])[:12]:
-        if len(strong) + len(weak) >= 5:
+    for result in raw.get("organic", [])[:14]:
+        if len(strong) + len(weak) >= _MAX:
             break
         url = result.get("link", "")
         title = result.get("title", "")
@@ -735,12 +741,12 @@ def _parse_competitor_serp_response(raw: Any, company: str) -> list[dict]:
     #   - Weak-only: need ≥3 to publish (single/double domain hits without any
     #     explicit competitor-list mention is too thin to claim "competitors").
     if len(strong) >= 2:
-        # Strong-first; fill with weak up to 5
-        return (strong + weak)[:5]
+        # Strong-first; fill with weak up to _MAX
+        return (strong + weak)[:_MAX]
     if len(strong) == 1 and weak:
-        return (strong + weak)[:5]
+        return (strong + weak)[:_MAX]
     if not strong and len(weak) >= 3:
-        return weak[:5]
+        return weak[:_MAX]
     return []
 
 

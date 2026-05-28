@@ -3,9 +3,16 @@ import { Card, CardBody, CardHeader, CardTitle, Badge, StatDot } from "./ui/prim
 import type { CompetitorRow } from "@/lib/types";
 import { Radio, ExternalLink, AlertCircle } from "lucide-react";
 
+const DISPLAY_LIMIT = 5;
+
 export function CompetitorTable({ rows }: { rows: CompetitorRow[] }) {
   const liveCount = rows.filter((r) => r.mode === "live").length;
   const allMock = rows.length > 0 && rows.every((r) => !r.mode || r.mode === "mock");
+
+  // Cap visible rows at DISPLAY_LIMIT but keep the full set in scope so the
+  // overflow line below can quote the real count used in scoring.
+  const visibleRows = rows.slice(0, DISPLAY_LIMIT);
+  const hiddenCount = Math.max(0, rows.length - DISPLAY_LIMIT);
 
   return (
     <Card>
@@ -42,7 +49,7 @@ export function CompetitorTable({ rows }: { rows: CompetitorRow[] }) {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((r) => (
+                {visibleRows.map((r) => (
                   <tr key={r.name} className="border-t border-line/60 hover:bg-bg-elev/30 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
@@ -78,6 +85,11 @@ export function CompetitorTable({ rows }: { rows: CompetitorRow[] }) {
                 ))}
               </tbody>
             </table>
+            {hiddenCount > 0 && (
+              <div className="px-4 py-2 border-t border-line/60 text-[10.5px] text-ink-dim italic">
+                +{hiddenCount} more used in scoring
+              </div>
+            )}
             {allMock && (
               <div className="flex items-center gap-2 px-4 py-2.5 border-t border-line/60 bg-bg-elev/40 text-[11px] text-ink-dim">
                 <AlertCircle className="h-3 w-3 shrink-0" />

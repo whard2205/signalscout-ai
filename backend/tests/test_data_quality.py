@@ -323,6 +323,95 @@ def test_extract_competitors_from_hostile_snippet() -> None:
         assert junk not in out, f"{junk!r} leaked into output: {out}"
 
 
+# ── COMPETITOR DENSITY SCALING (5 strong < 8 strong) ─────────────────────────
+
+def _build_competitor_signals(n_strong: int) -> tuple[list, list]:
+    """Return (signals, evidence) emulating what _inject_live_signals produces
+    for `n_strong` competitors above the 3-threshold.
+
+    Mirrors backend/app/api/routes.py:_inject_live_signals — primary
+    competitor SignalCard plus secondary pricing SignalCards (one per extra
+    strong competitor above 3, capped at 5; confidence decays after 2).
+    """
+    from app.models.schemas import Evidence, SignalCard
+
+    ev: list = []
+    sig: list = []
+    # Primary competitor signal — high conf, positive, live
+    ev.append(Evidence(
+        id="comp_1", source="bright-data-serp", source_title="primary",
+        url=None, signal="competitor", summary="t", timestamp=None,
+        tool="SERP API", confidence="high", mode="live",  # type: ignore[arg-type]
+    ))
+    sig.append(SignalCard(
+        kind="competitor", title="primary", detail="d",
+        impact="positive", evidence_ids=["comp_1"],  # type: ignore[arg-type]
+    ))
+    extras = max(0, n_strong - 3)
+    capped = min(extras, 5)
+    for i in range(capped):
+        extra_conf = "medium" if i < 2 else "low"
+        eid = f"comp_density_{i + 1}"
+        ev.append(Evidence(
+            id=eid, source="bright-data-serp", source_title="extra",
+            url=None, signal="pricing", summary="t", timestamp=None,
+            tool="SERP API", confidence=extra_conf, mode="live",  # type: ignore[arg-type]
+        ))
+        sig.append(SignalCard(
+            kind="pricing", title="extra", detail="d",
+            impact="neutral", evidence_ids=[eid],  # type: ignore[arg-type]
+        ))
+    return sig, ev
+
+
+def test_competitor_threat_8_strong_outscores_5_strong() -> None:
+    """Regression: 8 strong competitors must produce a higher
+    competitor_threat than 5 strong competitors. Pins the count-based
+    scaling fix so we never silently revert to the 54-plateau bug."""
+    from app.services.scoring import compute_scores
+
+    sig5, ev5 = _build_competitor_signals(5)
+    sig8, ev8 = _build_competitor_signals(8)
+    score5 = compute_scores(sig5, ev5).competitor_threat.value
+    score8 = compute_scores(sig8, ev8).competitor_threat.value
+    assert score8 > score5, (
+        f"8-strong ({score8}) must outscore 5-strong ({score5}). "
+        "If this fails, the competitor density scaling regressed to a plateau."
+    )
+
+
+def test_competitor_threat_3_strong_lowest_in_strong_set() -> None:
+    """Niche / specialist companies (exactly 3 strong competitors, no extras)
+    must score LOWER than companies with 5 or 8 strong competitors."""
+    from app.services.scoring import compute_scores
+
+    sig3, ev3 = _build_competitor_signals(3)
+    sig5, ev5 = _build_competitor_signals(5)
+    score3 = compute_scores(sig3, ev3).competitor_threat.value
+    score5 = compute_scores(sig5, ev5).competitor_threat.value
+    assert score3 < score5, (
+        f"3-strong ({score3}) should score lower than 5-strong ({score5}). "
+        "Niche markets must register as less competitively dense."
+    )
+
+
+def test_competitor_threat_monotonic_in_strong_count() -> None:
+    """Scores must be monotonically non-decreasing as strong-count rises
+    from 3 → 4 → 5 → 6 → 7 → 8. (Equal is OK if the density cap binds;
+    strictly decreasing would indicate a bug.)"""
+    from app.services.scoring import compute_scores
+
+    scores = []
+    for n in range(3, 9):  # 3..8 inclusive
+        sig, ev = _build_competitor_signals(n)
+        scores.append(compute_scores(sig, ev).competitor_threat.value)
+    for i in range(1, len(scores)):
+        assert scores[i] >= scores[i - 1], (
+            f"Non-monotonic at n={i + 3}: {scores}. "
+            "competitor_threat must never drop as more competitors appear."
+        )
+
+
 def test_extract_competitors_returns_empty_when_no_intro() -> None:
     """Snippet without 'competitors are/include' intro returns empty list."""
     snippet = "Amazon reported strong Q1 results with revenue up 12%."
