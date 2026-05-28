@@ -16,6 +16,7 @@ const STATUS_LABEL: Record<string, string> = {
   cached: "pre-warmed snapshot",
   mock: "demo",
   fallback: "fallback",
+  partial: "partial extraction",
   skipped: "skipped",
   error: "error",
   architecture: "wired · not active",
@@ -23,7 +24,7 @@ const STATUS_LABEL: Record<string, string> = {
 
 export function JudgeMode({ infra, mode, evidenceCount }: { infra: InfraCall[]; mode: ReportMode; evidenceCount: number }) {
   // Count both 'ok' (truly live) and 'cached' (pre-warmed snapshot) as actively serving data.
-  const liveTools = infra.filter((i) => i.status === "ok" || i.status === "cached");
+  const liveTools = infra.filter((i) => i.status === "ok" || i.status === "cached" || i.status === "partial");
   const totalEvidence = evidenceCount;
 
   return (
@@ -95,12 +96,14 @@ export function JudgeMode({ infra, mode, evidenceCount }: { infra: InfraCall[]; 
 function ToolCard({ row }: { row: InfraCall }) {
   const isLive = row.status === "ok";
   const isCached = row.status === "cached";
+  const isPartial = row.status === "partial";
   const isArch = row.status === "architecture";
   return (
     <div
       className={`rounded-xl border p-4 flex items-start gap-3 transition ${
         isLive ? "border-accent/30 bg-accent/5"
         : isCached ? "border-accent2/30 bg-accent2/5"
+        : isPartial ? "border-accent-warn/30 bg-accent-warn/5"
         : isArch ? "border-line/40 bg-bg/20 opacity-60"
         : "border-line bg-bg-elev/60"
       }`}
@@ -120,7 +123,7 @@ function ToolCard({ row }: { row: InfraCall }) {
             )}
             {/* Status */}
             <div className="flex items-center gap-1 text-[11px] text-ink-muted">
-              <StatDot tone={isLive || isCached ? "ok" : row.status === "error" ? "danger" : "mute"} />
+              <StatDot tone={isLive || isCached ? "ok" : isPartial ? "warn" : row.status === "error" ? "danger" : "mute"} />
               <span>{STATUS_LABEL[row.status] ?? row.status}</span>
               {row.ms > 0 && <span className="text-ink-dim">· {row.ms}ms</span>}
             </div>

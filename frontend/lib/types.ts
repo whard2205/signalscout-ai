@@ -4,7 +4,7 @@ export type EvidenceMode = "live" | "mock" | "fallback";
 export type SourceTier = "tier-1" | "tier-2" | "tier-3";
 export type ReportMode = "live" | "mock" | "hybrid" | "fallback";
 export type LLMProvider = "claude" | "mimo" | "none";
-export type InfraStatus = "ok" | "mock" | "fallback" | "skipped" | "error" | "architecture" | "cached";
+export type InfraStatus = "ok" | "mock" | "fallback" | "skipped" | "error" | "architecture" | "cached" | "partial";
 export type BrightDataTool =
   | "SERP API"
   | "Web Scraper API"

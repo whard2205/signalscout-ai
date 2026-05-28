@@ -10,7 +10,7 @@ import { ActionPack } from "./ActionPack";
 import { AuditTrail } from "./AuditTrail";
 import { CompetitorTable } from "./CompetitorTable";
 import { JudgeMode } from "./JudgeMode";
-import { analyzeStream } from "@/lib/api";
+import { analyzeOnce, analyzeStream } from "@/lib/api";
 import type { AnalyzeResponse, TimelineEvent } from "@/lib/types";
 
 const SUGGESTIONS = ["NVIDIA", "Anthropic", "Affirm", "Walmart", "Marriott", "Amazon"];
@@ -30,14 +30,37 @@ export function Cockpit() {
   const [running, setRunning] = useState(false);
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [report, setReport] = useState<AnalyzeResponse | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const stopRef = useRef<null | (() => void)>(null);
+  const gotResultRef = useRef(false);
+  const fallbackRef = useRef(false);
 
   function start(name: string) {
     const target = name.trim();
     if (!target || running) return;
     setRunning(true);
     setReport(null);
+    setNotice(null);
+    gotResultRef.current = false;
+    fallbackRef.current = false;
     setEvents(PIPELINE.map((p, i) => ({ ...p, status: i === 0 ? "running" : "pending" })));
+
+    const runFallback = async () => {
+      if (fallbackRef.current || gotResultRef.current) return;
+      fallbackRef.current = true;
+      setNotice("Streaming was interrupted; completing with the direct analysis endpoint.");
+      try {
+        const result = await analyzeOnce(target);
+        gotResultRef.current = true;
+        setReport(result);
+        setEvents((prev) => prev.map((e) => ({ ...e, status: "done" })));
+      } catch {
+        setNotice("Analysis failed. Check that the deployed backend URL and environment variables are configured.");
+        setEvents((prev) => prev.map((e) => e.status === "running" ? { ...e, status: "error" } : e));
+      } finally {
+        setRunning(false);
+      }
+    };
 
     stopRef.current?.();
     stopRef.current = analyzeStream(target, {
@@ -55,9 +78,18 @@ export function Cockpit() {
       onStepsFinal: (steps) => {
         setEvents(steps.map((s) => ({ ...s, status: "done" as const })));
       },
-      onResult: (r) => setReport(r),
-      onEnd: () => setRunning(false),
-      onError: () => setRunning(false),
+      onResult: (r) => {
+        gotResultRef.current = true;
+        setReport(r);
+      },
+      onEnd: () => {
+        if (gotResultRef.current) {
+          setRunning(false);
+        } else {
+          void runFallback();
+        }
+      },
+      onError: () => { void runFallback(); },
     });
   }
 
@@ -74,6 +106,7 @@ export function Cockpit() {
           onRunWith={start}
           running={running}
         />
+        {notice && <RuntimeNotice message={notice} />}
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,360px] gap-6">
           <div className="space-y-6">
@@ -104,6 +137,15 @@ export function Cockpit() {
     </div>
   );
 }
+
+function RuntimeNotice({ message }: { message: string }) {
+  return (
+    <div className="rounded-lg border border-accent-warn/25 bg-accent-warn/10 px-4 py-3 text-[12.5px] text-accent-warn">
+      {message}
+    </div>
+  );
+}
+
 
 function TopBar() {
   return (

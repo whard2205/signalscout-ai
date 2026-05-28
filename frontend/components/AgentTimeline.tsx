@@ -58,7 +58,7 @@ function Row({ ev, index, isLast }: { ev: TimelineEvent; index: number; isLast: 
   const modeTone =
     ev.mode === "ok"        ? "text-accent"
     : ev.mode === "mock"    ? "text-ink-dim"
-    : ev.mode === "fallback" ? "text-accent-warn"
+    : ev.mode === "fallback" || ev.mode === "partial" ? "text-accent-warn"
     : ev.mode === "error"   ? "text-accent-danger"
     : "text-ink-dim";
 
@@ -98,6 +98,7 @@ function Row({ ev, index, isLast }: { ev: TimelineEvent; index: number; isLast: 
                     : "ready"
                   )
                 : ev.mode === "architecture" ? "wired · not active"
+                : ev.mode === "partial" ? "partial extraction"
                 : ev.mode}
               {ev.ms && ev.ms > 0 ? ` · ${ev.ms < 1000 ? ev.ms + "ms" : (ev.ms / 1000).toFixed(1) + "s"}` : ""}
             </span>

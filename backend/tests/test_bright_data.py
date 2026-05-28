@@ -15,6 +15,7 @@ import os
 import pytest
 
 from app.services.bright_data import BrightDataClient
+from app.models.schemas import InfraCall
 
 
 # ── Method-presence pinning ─────────────────────────────────────────────────
@@ -102,3 +103,15 @@ def test_warmup_does_not_crash_with_dataset_id_set_in_mock_mode() -> None:
             os.environ.pop("USE_MOCK", None)
         else:
             os.environ["USE_MOCK"] = old_mock
+
+
+def test_infra_call_accepts_partial_status() -> None:
+    """Web Unlocker can return partial text; infra schema must accept it."""
+    row = InfraCall(
+        tool="Web Unlocker",
+        purpose="Article title / partial text",
+        status="partial",
+        ms=123,
+        evidence_count=1,
+    )
+    assert row.status == "partial"

@@ -13,10 +13,11 @@ Hackathon deadline: **2026-05-31**. Optimized for the 3-minute live demo.
 > `BRIGHT_DATA_API_TOKEN`, `BRIGHT_DATA_SERP_ZONE=serp_api1`,
 > `BRIGHT_DATA_UNLOCKER_ZONE=web_unlocker1`,
 > `BRIGHT_DATA_SCRAPER_DATASET_ID`, `ANTHROPIC_API_KEY`,
-> `ANTHROPIC_MODEL=claude-3-5-haiku-20241022`,
-> `ANTHROPIC_MAX_TOKENS=1200`, `MIMO_API_KEY`,
+> `ANTHROPIC_MODEL=claude-haiku-4-5-20251001`,
+> `ANTHROPIC_MAX_TOKENS=1200`, `LLM_TIMEOUT_S=18`, `MIMO_API_KEY`,
 > `MIMO_BASE_URL=https://api.xiaomimimo.com/v1`, `MIMO_MODEL=mimo-v2.5`,
 > `USE_MOCK=false`, `FAST_DEMO=true`, `AUTO_WARMUP=true`,
+> `ANALYZE_TIMEOUT_S=60`,
 > `PYTHON_VERSION=3.11.9`.
 >
 > After Railway deploy, generate a public domain and set Vercel
@@ -35,10 +36,11 @@ Hackathon deadline: **2026-05-31**. Optimized for the 3-minute live demo.
 > Then Cloud Run service -> Edit & deploy new revision -> Variables and Secrets:
 > `BRIGHT_DATA_API_TOKEN`, `BRIGHT_DATA_SERP_ZONE=serp_api1`,
 > `BRIGHT_DATA_UNLOCKER_ZONE=web_unlocker1`, `BRIGHT_DATA_SCRAPER_DATASET_ID`,
-> `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL=claude-3-5-haiku-20241022`,
-> `ANTHROPIC_MAX_TOKENS=1200`, `MIMO_API_KEY`,
+> `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL=claude-haiku-4-5-20251001`,
+> `ANTHROPIC_MAX_TOKENS=1200`, `LLM_TIMEOUT_S=18`, `MIMO_API_KEY`,
 > `MIMO_BASE_URL=https://api.xiaomimimo.com/v1`, `MIMO_MODEL=mimo-v2.5`,
-> `USE_MOCK=false`, `FAST_DEMO=true`, `AUTO_WARMUP=true`.
+> `USE_MOCK=false`, `FAST_DEMO=true`, `AUTO_WARMUP=true`,
+> `ANALYZE_TIMEOUT_S=60`.
 >
 > Smoke test: `https://<cloud-run-url>/health`, then set Vercel
 > `NEXT_PUBLIC_API_BASE=https://<cloud-run-url>`.
@@ -92,7 +94,7 @@ BRIGHT_DATA_SERP_ZONE          serp_api1
 BRIGHT_DATA_UNLOCKER_ZONE      web_unlocker1
 BRIGHT_DATA_SCRAPER_DATASET_ID (from local .env)
 ANTHROPIC_API_KEY              (from local .env)
-ANTHROPIC_MODEL                claude-3-5-haiku-20241022
+ANTHROPIC_MODEL                claude-haiku-4-5-20251001
 ANTHROPIC_MAX_TOKENS           1200
 MIMO_API_KEY                   (from local .env)
 USE_MOCK                       false
@@ -103,7 +105,7 @@ PYTHON_VERSION                 3.11.9
 
 Notes:
 - `ANTHROPIC_MODEL` / `ANTHROPIC_MAX_TOKENS` lock the cascade to cost-safe
-  Haiku 3.5. Do not bump to Sonnet during the hackathon.
+  Haiku 4.5. Do not bump to Sonnet during the hackathon.
 - `AUTO_WARMUP=true` triggers pre-caching of the 6 hero companies right
   after boot. First demo click then returns in milliseconds.
 - `FAST_DEMO=true` collapses the SSE timeline delays so the live pitch

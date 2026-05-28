@@ -274,6 +274,72 @@ def _cache_set(company: str, resp: AnalyzeResponse) -> None:
     _CACHE[company.strip().lower()] = (time.time(), resp)
 
 
+def _timeout_s(name: str, default: float, min_value: float, max_value: float) -> float:
+    raw = os.getenv(name, str(default)).strip()
+    try:
+        value = float(raw)
+    except ValueError:
+        value = default
+    return max(min_value, min(value, max_value))
+
+
+def _analyze_timeout_s() -> float:
+    return _timeout_s("ANALYZE_TIMEOUT_S", 60.0, 15.0, 120.0)
+
+
+def _llm_timeout_s() -> float:
+    return _timeout_s("LLM_TIMEOUT_S", 18.0, 5.0, 45.0)
+
+
+def _fallback_response(company: str, reason: str = "Live analysis timed out") -> AnalyzeResponse:
+    """Guaranteed response for any input company.
+
+    This is the last safety net for hosted demos: if live search, unlocker, or
+    LLM calls stall, the cockpit still renders a complete report with honest
+    fallback labels instead of an empty panel.
+    """
+    base = build_mock_response(company)
+    for e in base.evidence:
+        e.mode = "fallback"
+        e.confidence = "low"
+        e.source_title = _strip_demo_markers(e.source_title or "")
+        e.summary = _strip_demo_markers(e.summary)
+    for c in base.competitors:
+        c.mode = "fallback"
+        c.threat = "low"
+    base.executive_summary = (
+        f"{company} analysis completed in fallback mode because live sources did not "
+        "return fast enough. Use the Evidence Ledger as a structured starting point, "
+        "then rerun when live web calls are available."
+    )
+    base.why_now_reason = (
+        f"{company} needs manual verification: live signals were unavailable during this run, "
+        "so outreach should wait for source confirmation."
+    )
+    base.infra = [
+        InfraCall(tool="SERP API", purpose=reason, status="fallback", ms=0, evidence_count=0),
+        InfraCall(tool="SERP API", purpose="Competitor query fallback", status="fallback", ms=0, evidence_count=0),
+        InfraCall(tool="Web Scraper API", purpose="No live snapshot served in fallback response", status="fallback", ms=0, evidence_count=0),
+        InfraCall(tool="Web Unlocker", purpose="Skipped because live SERP did not complete", status="skipped", ms=0, evidence_count=0),
+        InfraCall(tool="MCP Server", purpose="JSON-RPC 2.0 endpoint available", status="ok", ms=1, evidence_count=3),
+    ]
+    base.mode = "fallback"
+    base.llm_provider = "none"
+    base.scores = compute_scores(base.signals, base.evidence)
+    base.evidence_hash = _compute_evidence_hash(base.evidence, base.scores)
+    base.generated_at = datetime.now(timezone.utc).isoformat()
+    return base
+
+
+async def _safe_build_response(company: str) -> AnalyzeResponse:
+    try:
+        return await asyncio.wait_for(_build_response(company), timeout=_analyze_timeout_s())
+    except asyncio.TimeoutError:
+        return _fallback_response(company, f"Analyze timeout after {_analyze_timeout_s():.0f}s")
+    except Exception as exc:
+        return _fallback_response(company, f"Analyze error: {type(exc).__name__}")
+
+
 @router.get("/health")
 async def health() -> dict:
     bd = BrightDataClient()
@@ -469,11 +535,33 @@ async def _build_response(company: str) -> AnalyzeResponse:
     overlay: dict | None = None
     provider: str = "none"
     if claude_configured():
-        overlay = claude_synthesize(company=company, signals=signals_dump, evidence=evidence_dump)
+        try:
+            overlay = await asyncio.wait_for(
+                asyncio.to_thread(
+                    claude_synthesize,
+                    company=company,
+                    signals=signals_dump,
+                    evidence=evidence_dump,
+                ),
+                timeout=_llm_timeout_s(),
+            )
+        except Exception:
+            overlay = None
         if overlay:
             provider = "claude"
     if overlay is None and mimo_configured():
-        overlay = mimo_synthesize(company=company, signals=signals_dump, evidence=evidence_dump)
+        try:
+            overlay = await asyncio.wait_for(
+                asyncio.to_thread(
+                    mimo_synthesize,
+                    company=company,
+                    signals=signals_dump,
+                    evidence=evidence_dump,
+                ),
+                timeout=_llm_timeout_s(),
+            )
+        except Exception:
+            overlay = None
         if overlay:
             provider = "mimo"
 
@@ -638,7 +726,7 @@ async def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
     cached = _cache_get(req.company)
     if cached is not None:
         return cached
-    resp = await _build_response(req.company)
+    resp = await _safe_build_response(req.company)
     _cache_set(req.company, resp)
     return resp
 
@@ -683,7 +771,7 @@ async def warmup(companies: list[str] | None = None,
         if _cache_get(c) is not None:
             entry.update({"cached": True, "ms": 0})
         else:
-            resp = await _build_response(c)
+            resp = await _safe_build_response(c)
             _cache_set(c, resp)
             entry.update({
                 "cached": False,
@@ -785,10 +873,10 @@ async def compare(a: str, b: str) -> dict:
 
     Powers a 'why does X score higher than Y?' explainability story for judges.
     """
-    cached_a = _cache_get(a) or await _build_response(a)
+    cached_a = _cache_get(a) or await _safe_build_response(a)
     if _cache_get(a) is None:
         _cache_set(a, cached_a)
-    cached_b = _cache_get(b) or await _build_response(b)
+    cached_b = _cache_get(b) or await _safe_build_response(b)
     if _cache_get(b) is None:
         _cache_set(b, cached_b)
 
@@ -903,7 +991,7 @@ async def _event_stream(company: str):
     if cached is not None:
         result = cached
     else:
-        result = await _build_response(company)
+        result = await _safe_build_response(company)
         _cache_set(company, result)
 
     # Queue-based enrichment: handles multiple infra entries per tool (two SERP calls)

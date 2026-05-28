@@ -258,11 +258,13 @@ months — that weakens the "why NOW" claim regardless of other signals.
    - `BRIGHT_DATA_SERP_ZONE` — e.g. `serp_api1`
    - `BRIGHT_DATA_UNLOCKER_ZONE` — e.g. `web_unlocker1`
    - `MIMO_API_KEY` (or `ANTHROPIC_API_KEY` if you have Claude credit)
-   - `ANTHROPIC_MODEL=claude-3-5-haiku-20241022`
+   - `ANTHROPIC_MODEL=claude-haiku-4-5-20251001`
    - `ANTHROPIC_MAX_TOKENS=1200`
+   - `LLM_TIMEOUT_S=18`
    - `USE_MOCK=false`
    - `FAST_DEMO=true`
    - `AUTO_WARMUP=true`
+   - `ANALYZE_TIMEOUT_S=60`
 6. Deploy. Smoke test: `curl https://<your-app>.onrender.com/health` → `{"status":"ok","mode":"live"}`.
 7. Pre-warm: `curl -X POST https://<your-app>.onrender.com/warmup` (runs once at boot too via `AUTO_WARMUP=true`).
 

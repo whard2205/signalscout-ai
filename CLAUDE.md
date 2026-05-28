@@ -176,7 +176,7 @@ If any answer is **no**, don't build it during the hackathon.
 
 ### Wire real Claude synthesis
 - Already wired in `claude_service.py`. Set `ANTHROPIC_API_KEY=sk-ant-...` in `.env`.
-- Default model: `claude-3-5-haiku-20241022` with `ANTHROPIC_MAX_TOKENS=1200` for lower demo cost/latency.
+- Default model: `claude-haiku-4-5-20251001` with `ANTHROPIC_MAX_TOKENS=1200` for lower demo cost/latency.
 - Override with `ANTHROPIC_MODEL=...` only if quality is more important than cost.
 - Prompt enforces the No-BS rules. Don't relax them — that's our differentiation.
 
@@ -207,6 +207,6 @@ When the user is preparing for the demo:
 
 - Hackathon page: <https://brightdata.com> (Web Data UNLOCKED, May 25–31, 2026)
 - Bright Data docs: <https://docs.brightdata.com>
-- Anthropic SDK: `anthropic` Python package, default model `claude-3-5-haiku-20241022`
+- Anthropic SDK: `anthropic` Python package, default model `claude-haiku-4-5-20251001`
 - `PLAN.md` in repo root has the day-by-day execution plan
 - `README.md` has the quickstart + 3-minute demo script

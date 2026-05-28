@@ -104,7 +104,7 @@ class ActionPack(BaseModel):
 
 # ----- Infrastructure log (judge mode) -----
 
-InfraStatus = Literal["ok", "mock", "fallback", "skipped", "error", "architecture", "cached"]
+InfraStatus = Literal["ok", "mock", "fallback", "skipped", "error", "architecture", "cached", "partial"]
 
 
 class InfraCall(BaseModel):

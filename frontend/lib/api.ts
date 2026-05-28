@@ -42,10 +42,12 @@ export function analyzeStream(company: string, h: StreamHandler) {
     try { h.onStep?.(JSON.parse((e as MessageEvent).data)); } catch {}
   });
   es.addEventListener("steps_final", (e) => {
-    try { h.onStepsFinal?.(JSON.parse((e as MessageEvent).data).steps); } catch {}
+    try { h.onStepsFinal?.(JSON.parse((e as MessageEvent).data).steps); }
+    catch (err) { h.onError?.(err instanceof Error ? err : new Error("steps_final parse error")); }
   });
   es.addEventListener("result", (e) => {
-    try { h.onResult?.(JSON.parse((e as MessageEvent).data)); } catch {}
+    try { h.onResult?.(JSON.parse((e as MessageEvent).data)); }
+    catch (err) { h.onError?.(err instanceof Error ? err : new Error("result parse error")); }
   });
   es.addEventListener("end", () => { h.onEnd?.(); es.close(); });
   es.onerror = () => { h.onError?.(new Error("stream error")); es.close(); };
