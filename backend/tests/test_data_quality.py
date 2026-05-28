@@ -21,6 +21,10 @@ from app.services.bright_data import (
     _looks_like_competitor_name,
     _parse_competitor_serp_response,
 )
+from app.api.routes import _inject_live_signals
+from app.models.schemas import CompetitorRow, Evidence
+from app.services.mock_data import build_mock_response
+from app.services.scoring import compute_scores
 
 
 # ── COMPETITOR PARSER ─────────────────────────────────────────────────────────
@@ -284,6 +288,53 @@ def test_no_competitor_evidence_keeps_threat_at_baseline() -> None:
     # Provide no competitor signal at all
     result = compute_scores([], [])
     assert result.competitor_threat.value == round(BASELINE["competitor_threat"])
+
+
+def test_live_competitors_score_when_news_serp_fallback() -> None:
+    """Competitor SERP + scraper evidence must still score if news SERP fails.
+
+    Regression for hosted runs where Anthropic had 8 live competitors but
+    why_now stayed at baseline because _inject_live_signals was only called
+    when news/funding SERP returned rows.
+    """
+    base = build_mock_response("Anthropic")
+    base.evidence = [
+        Evidence(
+            id="scrape_1",
+            source="linkedin.com",
+            source_title="Anthropic hiring snapshot",
+            url=None,
+            signal="hiring",
+            summary="Sales and Business Development role sampled.",
+            timestamp=None,
+            tool="Web Scraper API",
+            confidence="high",
+            mode="live",
+        )
+    ]
+    base.signals = []
+    base.competitors = [
+        CompetitorRow(
+            name=name,
+            overlap="AI assistants & LLMs",
+            recent_move="Listed as a competitor.",
+            threat="high",
+            mode="live",
+        )
+        for name in [
+            "OpenAI", "Mistral AI", "DeepSeek", "Cohere",
+            "Together AI", "Replicate", "Google", "Meta",
+        ]
+    ]
+
+    _inject_live_signals(base, [], company="Anthropic")
+    scores = compute_scores(base.signals, base.evidence)
+
+    assert any(s.kind == "hiring" for s in base.signals)
+    assert any(s.kind == "competitor" for s in base.signals)
+    assert any(e.id == "comp_1" for e in base.evidence)
+    assert scores.why_now.value > 10
+    assert scores.competitor_threat.value > 12
 
 
 def test_high_quality_competitor_set_outscores_low_quality() -> None:

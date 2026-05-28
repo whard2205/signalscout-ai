@@ -612,8 +612,12 @@ async def _build_response(company: str) -> AnalyzeResponse:
         ),
     ]
 
-    # 6. Inject live signal cards derived from news evidence
-    if live_evidence:
+    # 6. Inject live signal cards derived from whatever live sources succeeded.
+    # Important: competitor SERP and Web Scraper snapshots can succeed even when
+    # the news/funding SERP call times out. In that case they still need to
+    # produce SignalCards and synthetic evidence rows so scoring does not fall
+    # back to the cold baseline while the UI shows live competitors.
+    if has_any_live:
         _inject_live_signals(base, live_evidence, company=company)
 
     # 7. Deterministic scores from final evidence
