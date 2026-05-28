@@ -140,17 +140,24 @@ Open http://localhost:3000
 ```env
 # backend/.env
 
-# Leave empty to use mock mode (demo-safe)
+# Bright Data (leave empty to use mock mode — demo-safe)
 BRIGHT_DATA_API_TOKEN=
 BRIGHT_DATA_SERP_ZONE=serp_api1
-BRIGHT_DATA_UNLOCKER_ZONE=unblocker
+BRIGHT_DATA_UNLOCKER_ZONE=web_unlocker1
+BRIGHT_DATA_SCRAPER_DATASET_ID=     # optional — /analyze still serves pre-warmed snapshots without it
+
+# LLM cascade — Claude (primary) → MiMo (failover) → deterministic templates
 ANTHROPIC_API_KEY=
+ANTHROPIC_MODEL=claude-haiku-4-5-20251001
+ANTHROPIC_MAX_TOKENS=1200
+MIMO_API_KEY=
+MIMO_BASE_URL=https://api.xiaomimimo.com/v1
+MIMO_MODEL=mimo-v2.5
 
-# Set false to enable live Bright Data calls
-USE_MOCK=true
-
-# Set true to shorten timeline animation delays
-FAST_DEMO=false
+# Mode flags
+USE_MOCK=true        # set "false" once tokens are filled to enable live calls
+FAST_DEMO=false      # set "true" in production to shorten SSE timeline delays
+AUTO_WARMUP=false    # set "true" in production to pre-cache hero companies on boot
 ```
 
 ---
@@ -245,36 +252,74 @@ months — that weakens the "why NOW" claim regardless of other signals.
 
 ---
 
-## Deployment (Vercel + Render)
+## Deployment (Vercel + Google Cloud Run)
 
-### Backend (Render)
+This project is currently deployed at:
+- **Frontend:** https://signalscout-ai.vercel.app
+- **Backend:** https://signalscout-api-47232592262.asia-southeast2.run.app
+- **GitHub:** https://github.com/whard2205/signalscout-ai
 
-1. Push this repo to GitHub.
-2. Render → New → Web Service → connect repo, root directory `backend/`.
-3. **Build command**: `pip install -r requirements.txt`
-4. **Start command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Set environment variables (Settings → Environment):
-   - `BRIGHT_DATA_API_TOKEN` — your token
-   - `BRIGHT_DATA_SERP_ZONE` — e.g. `serp_api1`
-   - `BRIGHT_DATA_UNLOCKER_ZONE` — e.g. `web_unlocker1`
-   - `MIMO_API_KEY` (or `ANTHROPIC_API_KEY` if you have Claude credit)
-   - `ANTHROPIC_MODEL=claude-haiku-4-5-20251001`
-   - `ANTHROPIC_MAX_TOKENS=1200`
-   - `LLM_TIMEOUT_S=18`
-   - `USE_MOCK=false`
-   - `FAST_DEMO=true`
-   - `AUTO_WARMUP=true`
-   - `ANALYZE_TIMEOUT_S=60`
-6. Deploy. Smoke test: `curl https://<your-app>.onrender.com/health` → `{"status":"ok","mode":"live"}`.
-7. Pre-warm: `curl -X POST https://<your-app>.onrender.com/warmup` (runs once at boot too via `AUTO_WARMUP=true`).
+`backend/Dockerfile`, `backend/.dockerignore`, and `railway.json` are committed
+so you can deploy to **Cloud Run**, **Railway**, or **Render** without code
+changes. The instructions below cover the live setup (Cloud Run + Vercel) plus
+fallbacks in the call-out box at the top of [DEPLOY.md](DEPLOY.md).
 
-> No Dockerfile required — Render auto-detects Python from `requirements.txt`.
+### Backend (Google Cloud Run)
+
+Cloud Run was chosen because the free tier is **always-on (no cold-start
+sleep)** unlike Render free, which matters for live demos.
+
+```bash
+# One-time setup
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+gcloud config set project <your-project-id>
+
+# Deploy from source (uses backend/Dockerfile)
+gcloud run deploy signalscout-api \
+  --source backend \
+  --region asia-southeast2 \
+  --allow-unauthenticated \
+  --memory 512Mi --cpu 1 --timeout 300 --port 8080
+```
+
+Then set env vars (non-secrets safe to put inline):
+
+```bash
+gcloud run services update signalscout-api --region asia-southeast2 --update-env-vars \
+  BRIGHT_DATA_SERP_ZONE=serp_api1,\
+  BRIGHT_DATA_UNLOCKER_ZONE=web_unlocker1,\
+  ANTHROPIC_MODEL=claude-haiku-4-5-20251001,\
+  ANTHROPIC_MAX_TOKENS=1200,\
+  MIMO_BASE_URL=https://api.xiaomimimo.com/v1,\
+  MIMO_MODEL=mimo-v2.5,\
+  USE_MOCK=false,\
+  FAST_DEMO=true,\
+  AUTO_WARMUP=true
+```
+
+Secrets via a temporary YAML so they don't appear in shell history — see
+[`DEPLOY.md`](DEPLOY.md) for the exact script. Required secrets:
+
+- `BRIGHT_DATA_API_TOKEN`
+- `BRIGHT_DATA_SCRAPER_DATASET_ID` (optional — `/analyze` serves pre-warmed snapshots without it)
+- `ANTHROPIC_API_KEY`
+- `MIMO_API_KEY`
+
+Smoke test:
+
+```bash
+curl https://<your-cloud-run-url>/health
+# {"status":"ok","mode":"live","claude":"configured","mimo":"configured","version":"0.4.0"}
+```
+
+`AUTO_WARMUP=true` pre-caches the 6 hero companies right after boot — first
+real demo click then returns in ~6 ms.
 
 ### Frontend (Vercel)
 
-1. Vercel → New Project → import repo, root directory `frontend/`.
+1. Vercel → New Project → import this repo, root directory `frontend/`.
 2. **Required env var** (Project → Settings → Environment Variables):
-   - `NEXT_PUBLIC_API_BASE` = `https://<your-backend>.onrender.com`
+   - `NEXT_PUBLIC_API_BASE` = `https://<your-backend-url>`  ← Cloud Run URL, no trailing slash
 3. Deploy.
 
 > **Important**: without `NEXT_PUBLIC_API_BASE`, the deployed Vercel app cannot
@@ -285,11 +330,11 @@ months — that weakens the "why NOW" claim regardless of other signals.
 ### Web Scraper snapshots
 
 Snapshots under `backend/snapshots/*.json` are committed to the repo so the
-deployed backend serves them after boot. To refresh:
+Docker image bakes them in and serves them after boot. To refresh:
 
 ```bash
-# On Render (Shell tab):
-curl -X POST https://<your-app>.onrender.com/scraper/refresh
+# Trigger fresh Bright Data Web Scraper jobs (requires BRIGHT_DATA_SCRAPER_DATASET_ID):
+curl -X POST https://<your-cloud-run-url>/scraper/refresh
 ```
 
 The `Web Scraper API` row in the cockpit shows **"pre-warmed Bright Data Web
@@ -297,6 +342,14 @@ Scraper snapshot"** — we never claim a synchronous live scrape because dataset
 trigger + poll is async (1-5 min) and would break the 3-minute demo flow.
 Pre-warming overnight is the production pattern (same as Salesforce, Outreach,
 ZoomInfo do for enterprise accounts).
+
+### Fallback platforms
+
+`backend/Dockerfile` + `railway.json` make the same image deployable on:
+- **Railway** — push to GitHub, import in Railway dashboard, set env vars
+- **Render** — connect repo, set root `backend/`, build `pip install -r requirements.txt`, start `uvicorn main:app --host 0.0.0.0 --port $PORT`
+
+See [DEPLOY.md](DEPLOY.md) §"Railway fallback" and §"Google Cloud Run fallback" for full instructions.
 
 ---
 

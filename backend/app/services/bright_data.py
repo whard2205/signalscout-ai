@@ -342,7 +342,37 @@ _NOT_COMPANY_HARD = frozenset({
     "sellers should watch", "should watch", "to watch",
     "to consider", "worth considering",
     "in 2024", "in 2025", "in 2026",
+    # Data-infrastructure / web-scraping platforms — these are the "shovels",
+    # not B2B competitors of any specific application company. Bright Data
+    # in particular appears in SERP listicles about AI data pipelines but is
+    # never a competitor of an AI assistant company. Reject outright.
+    "bright data", "brightdata", "bright-data",
+    "scraperapi", "scrapingbee", "zenrows", "oxylabs", "smartproxy",
+    "apify", "diffbot", "octoparse", "phantombuster",
+    # Sub-product fragments — feature-level mentions, not separate companies.
+    # We keep the PARENT product names ("ChatGPT", "Microsoft Copilot",
+    # "Gemini") as valid competitors; only the feature variants are dropped.
+    "chatgpt search", "chatgpt enterprise", "chatgpt team", "chatgpt pro",
+    "claude code", "claude desktop", "claude pro",
+    "gemini advanced", "gemini pro", "gemini ultra",
+    "copilot pro", "copilot enterprise",
 })
+
+
+# Per-company "self-product" reject list — products that belong to the
+# analyzed company and must never appear in its own competitor list. The
+# normal self-rejection rule covers the company NAME ("Anthropic" inside
+# "Anthropic" lookup) but not its product brands ("Claude" inside
+# "Anthropic" lookup). Keys are lowercase company name; values are lowercase
+# product brand names to filter.
+_SELF_PRODUCTS: dict[str, frozenset[str]] = {
+    "anthropic": frozenset({"claude"}),
+    "openai":    frozenset({"chatgpt", "chat gpt", "gpt-4", "gpt-5", "sora", "dall-e", "dalle"}),
+    "google":    frozenset({"gemini", "bard", "duet ai"}),
+    "microsoft": frozenset({"copilot", "microsoft copilot", "github copilot", "bing"}),
+    "meta":      frozenset({"llama", "meta ai"}),
+    "amazon":    frozenset({"alexa", "aws bedrock", "titan", "nova"}),
+}
 
 
 # Countries, regions, continents, languages, major cities. A competitor name
@@ -495,6 +525,12 @@ def _looks_like_competitor_name(name: str, company: str) -> bool:
         return False
     # Reject geography outright — countries, regions, cities, languages
     if lc in _GEOGRAPHY or suffix_stripped in _GEOGRAPHY:
+        return False
+    # Reject the analyzed company's own product brands (e.g. "Claude" when
+    # analyzing Anthropic, "ChatGPT" when analyzing OpenAI). These names
+    # would otherwise pass the generic gate and pollute the competitor set.
+    self_products = _SELF_PRODUCTS.get(company_lower, frozenset())
+    if self_products and (lc in self_products or suffix_stripped in self_products):
         return False
     letters = sum(1 for ch in name if ch.isalpha())
     if letters < 3:

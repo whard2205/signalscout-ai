@@ -20,6 +20,7 @@ import asyncio
 import hashlib
 import json
 import os
+import re
 import time
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -133,6 +134,51 @@ def _live_why_now(company: str, evidence: list[Evidence]) -> str:
     return f"{company} shows multiple live growth signals — high evaluation receptivity."
 
 
+_PARTIAL_TRAILERS = re.compile(
+    # Drop trailing connector words or dangling tokens that suggest a sentence
+    # got cut by SERP snippet truncation. Conservative: only strip the obvious
+    # cases so we don't over-eat real content.
+    r"\s+(?:at|of|in|to|for|with|by|on|the|a|an|and|or|"
+    r"\$[\d.,]+|\d{1,3}(?:,\d{3})*(?:\.\d+)?\$?|"
+    r"[A-Z]?\$\d[\d.,]*)\s*\.?\s*$",
+    re.IGNORECASE,
+)
+
+
+def _clean_anchor_for_outreach(raw: str) -> str:
+    """Trim outreach anchor strings so they don't end mid-sentence.
+
+    SERP snippets often arrive truncated by Google's display layer
+    (e.g. ``"...funding at $380"``). Pasting that verbatim into a cold
+    email reads as broken. We trim dangling currency/connector tokens
+    and strip trailing punctuation so the anchor ends cleanly.
+    """
+    text = (raw or "").strip().rstrip(" .,;:!?-")
+    # Iteratively strip dangling tokens (e.g. "at $380" → "at" → "")
+    for _ in range(3):
+        new = _PARTIAL_TRAILERS.sub("", text).rstrip(" .,;:!?-")
+        if new == text:
+            break
+        text = new
+    return text or raw.strip()
+
+
+def _word_safe_cut(text: str, max_chars: int) -> str:
+    """Cut at the last word boundary before ``max_chars``. Never cut mid-word.
+
+    Adds ``…`` only when content was actually trimmed.
+    """
+    text = (text or "").strip()
+    if len(text) <= max_chars:
+        return text.rstrip(" .,;:!?-")
+    cut = text[:max_chars]
+    # Step back to last whitespace
+    last_space = cut.rfind(" ")
+    if last_space > max_chars * 0.5:  # don't bail to empty string
+        cut = cut[:last_space]
+    return cut.rstrip(" .,;:!?-") + "…"
+
+
 def _live_action_pack(company: str, evidence: list[Evidence],
                       competitors: list[CompetitorRow]) -> ActionPack:
     """Build a deterministic action pack from live evidence.
@@ -154,7 +200,8 @@ def _live_action_pack(company: str, evidence: list[Evidence],
     # "post-round" if there's no real funding event.
     anchor_ev = funding_ev or product_ev or expansion_ev or hiring_ev or news_ev
     if anchor_ev:
-        anchor = (anchor_ev.source_title or anchor_ev.summary[:60]).rstrip(" .")
+        raw_anchor = anchor_ev.source_title or anchor_ev.summary[:60]
+        anchor = _clean_anchor_for_outreach(raw_anchor)
         trigger_kind = anchor_ev.signal
     else:
         anchor = f"{company}'s recent activity"
@@ -179,7 +226,7 @@ def _live_action_pack(company: str, evidence: list[Evidence],
         )
     if hiring_ev:
         angles.append(
-            f"Hiring signal active — {hiring_ev.summary[:90].rstrip('.')}. "
+            f"Hiring signal active — {_word_safe_cut(hiring_ev.summary, 90)}. "
             "Time outreach to land before new hires fully ramp."
         )
     if product_ev and not funding_ev:

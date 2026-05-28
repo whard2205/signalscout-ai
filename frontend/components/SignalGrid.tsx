@@ -18,6 +18,16 @@ const ICONS: Record<string, React.ReactNode> = {
 };
 
 export function SignalGrid({ signals }: { signals: SignalCard[] }) {
+  // Hide synthetic competitive-density rows ("comp_density_N") from the visual
+  // grid — they're scoring-only contributions, kept in the Evidence Ledger
+  // and Audit Trail for transparency but would otherwise clutter the panel
+  // with 5 near-identical "Competitive pressure" tiles. Filter is keyed off
+  // the backend's evidence_ids prefix so it stays in sync with routes.py.
+  const visibleSignals = signals.filter(
+    (s) => !(s.kind === "pricing" && s.evidence_ids?.some((id) => id.startsWith("comp_density_")))
+  );
+  const hiddenDensity = signals.length - visibleSignals.length;
+
   return (
     <Card>
       <CardHeader>
@@ -25,10 +35,15 @@ export function SignalGrid({ signals }: { signals: SignalCard[] }) {
       </CardHeader>
       <CardBody>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          {signals.map((s) => (
+          {visibleSignals.map((s) => (
             <SignalTile key={s.title} s={s} />
           ))}
         </div>
+        {hiddenDensity > 0 && (
+          <div className="mt-3 text-[10.5px] text-ink-dim italic">
+            +{hiddenDensity} competitive-density signal{hiddenDensity !== 1 ? "s" : ""} included in scoring (see Evidence Ledger &middot; <code className="font-mono text-[10px]">comp_density_*</code>).
+          </div>
+        )}
       </CardBody>
     </Card>
   );
