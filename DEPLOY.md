@@ -2,6 +2,47 @@
 
 Hackathon deadline: **2026-05-31**. Optimized for the 3-minute live demo.
 
+> **Railway fallback:** if Render billing/card verification blocks deployment,
+> use Railway for the backend. `railway.json` is committed at repo root and
+> runs:
+> - Build: `cd backend && pip install -r requirements.txt`
+> - Start: `cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT`
+> - Healthcheck: `/health`
+>
+> Railway variables are the same as Render:
+> `BRIGHT_DATA_API_TOKEN`, `BRIGHT_DATA_SERP_ZONE=serp_api1`,
+> `BRIGHT_DATA_UNLOCKER_ZONE=web_unlocker1`,
+> `BRIGHT_DATA_SCRAPER_DATASET_ID`, `ANTHROPIC_API_KEY`,
+> `ANTHROPIC_MODEL=claude-3-5-haiku-20241022`,
+> `ANTHROPIC_MAX_TOKENS=1200`, `MIMO_API_KEY`,
+> `MIMO_BASE_URL=https://api.xiaomimimo.com/v1`, `MIMO_MODEL=mimo-v2.5`,
+> `USE_MOCK=false`, `FAST_DEMO=true`, `AUTO_WARMUP=true`,
+> `PYTHON_VERSION=3.11.9`.
+>
+> After Railway deploy, generate a public domain and set Vercel
+> `NEXT_PUBLIC_API_BASE=https://<railway-domain>`.
+
+> **Google Cloud Run fallback:** if Render/Railway/Koyeb billing blocks you,
+> deploy the backend to Cloud Run. `backend/Dockerfile` is committed and listens
+> on Cloud Run's injected `$PORT`.
+>
+> From Google Cloud Shell:
+> ```
+> gcloud services enable run.googleapis.com cloudbuild.googleapis.com
+> gcloud run deploy signalscout-api --source backend --region asia-southeast2 --allow-unauthenticated
+> ```
+>
+> Then Cloud Run service -> Edit & deploy new revision -> Variables and Secrets:
+> `BRIGHT_DATA_API_TOKEN`, `BRIGHT_DATA_SERP_ZONE=serp_api1`,
+> `BRIGHT_DATA_UNLOCKER_ZONE=web_unlocker1`, `BRIGHT_DATA_SCRAPER_DATASET_ID`,
+> `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL=claude-3-5-haiku-20241022`,
+> `ANTHROPIC_MAX_TOKENS=1200`, `MIMO_API_KEY`,
+> `MIMO_BASE_URL=https://api.xiaomimimo.com/v1`, `MIMO_MODEL=mimo-v2.5`,
+> `USE_MOCK=false`, `FAST_DEMO=true`, `AUTO_WARMUP=true`.
+>
+> Smoke test: `https://<cloud-run-url>/health`, then set Vercel
+> `NEXT_PUBLIC_API_BASE=https://<cloud-run-url>`.
+
 > **DO NOT commit secrets.** `backend/.env` and `frontend/.env.local` are
 > already covered by `.gitignore`. Verify before each push:
 > ```
