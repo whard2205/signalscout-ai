@@ -729,6 +729,45 @@ def _inject_live_signals(base: AnalyzeResponse, live_evidence: list[Evidence],
         evidence_ids=[comp_evidence_id],
     ))
 
+    # Count-based competitive-density scaling — fix for the "all heroes hit
+    # competitor_threat=54" plateau. Once we're already above the 3-strong
+    # threshold, each additional strong competitor emits a low-weight
+    # "pricing" SignalCard (pricing's weight contributes to competitor_threat
+    # at 0.18, distinct from competitor's 0.35 so it doesn't double-count).
+    # Diminishing confidence per extra so the curve flattens above 6 strong.
+    extra_strong = max(0, strong_count - 3)
+    if extra_strong > 0:
+        # Cap to avoid runaway scaling on noisy SERP listicles
+        capped = min(extra_strong, 5)
+        for i in range(capped):
+            # Confidence decays from medium → low after the 2nd extra so
+            # 8+ competitors don't push the dimension past mid-70s.
+            extra_conf = "medium" if i < 2 else "low"
+            extra_id = f"comp_density_{i + 1}"
+            base.evidence.append(Evidence(
+                id=extra_id,
+                source="bright-data-serp",
+                source_title=f"Competitive density signal {i + 1} of {capped}",
+                url=None,
+                signal="pricing",  # pricing weight → competitor_threat at 0.18
+                summary=(
+                    f"Additional competitor beyond top-3 in {company}'s set "
+                    f"({3 + i + 1} of {n_comps} total). Indicates competitive "
+                    f"price/feature pressure."
+                ),
+                timestamp=None,
+                tool="SERP API",
+                confidence=extra_conf,  # type: ignore[arg-type]
+                mode="live",
+            ))
+            base.signals.append(SignalCard(
+                kind="pricing",
+                title=f"Competitive pressure: {live_competitors[min(3 + i, n_comps - 1)].name}",
+                detail="Extra-competitor density signal — see Why-Now methodology.",
+                impact="neutral",
+                evidence_ids=[extra_id],
+            ))
+
 
 @router.post("/analyze", response_model=AnalyzeResponse)
 async def analyze(req: AnalyzeRequest) -> AnalyzeResponse:

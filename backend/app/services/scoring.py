@@ -55,15 +55,21 @@ from app.models.schemas import Evidence, Score, Scores, SignalCard
 
 # Weight table: signal kind -> score dimension -> raw weight (0..1).
 # Ordering grounded in B2B intent frameworks — see module docstring above.
+#
+# Light cross-dimension weights on product/expansion → buying_intent so
+# companies with product launches or expansion activity register some
+# buying-intent lift even without an explicit hiring/funding event. Without
+# these, buying_intent plateaus at ~42 (baseline 12 + hiring contribution
+# ~30) for any company whose only positive signal is hiring.
 SIGNAL_WEIGHTS: dict[str, dict[str, float]] = {
     "hiring":     {"why_now": 0.18, "buying_intent": 0.25, "expansion_signal": 0.10},
     "funding":    {"why_now": 0.22, "buying_intent": 0.20, "expansion_signal": 0.20},
-    "product":    {"why_now": 0.18, "expansion_signal": 0.22},
+    "product":    {"why_now": 0.18, "expansion_signal": 0.22, "buying_intent": 0.08},
     "news":       {"why_now": 0.10, "expansion_signal": 0.08},
     "competitor": {"competitor_threat": 0.35, "why_now": 0.08},
     "pricing":    {"competitor_threat": 0.18, "why_now": 0.05},
     "review":     {"competitor_threat": 0.10, "buying_intent": 0.05},
-    "expansion":  {"expansion_signal": 0.22, "why_now": 0.10},
+    "expansion":  {"expansion_signal": 0.22, "why_now": 0.10, "buying_intent": 0.06},
 }
 
 # Multipliers — also documented and audit-able.
