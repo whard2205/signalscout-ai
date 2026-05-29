@@ -109,10 +109,23 @@ def _strip_demo_markers(text: str) -> str:
     # Drop trailing [Note: ...] block
     if "[Note:" in text:
         text = text.split("[Note:")[0].strip()
-    # Drop any inline [DEMO] / [DEMO DATA] tokens
-    for marker in ("[DEMO DATA — not verified]", "[DEMO DATA]", "[DEMO]"):
+    # Drop any inline [DEMO] / [Demo] / [DEMO DATA] tokens (all case variants)
+    for marker in ("[DEMO DATA — not verified]", "[DEMO DATA]", "[DEMO]", "[Demo]"):
         text = text.replace(marker, "").strip()
     return text.strip(" .;,") + ("." if text and not text.endswith(".") else "")
+
+
+def _strip_demo_label(text: str) -> str:
+    """Strip [Demo] / [DEMO] markers from short labels (signal titles, detail).
+
+    Unlike _strip_demo_markers, does NOT add a trailing period — short labels
+    should stay as labels, not become sentences.
+    """
+    if not text:
+        return text
+    for marker in ("[DEMO DATA — not verified]", "[DEMO DATA]", "[DEMO]", "[Demo]"):
+        text = text.replace(marker, "").strip()
+    return text.strip(" .;,")
 
 
 def _live_exec_summary(company: str, evidence: list[Evidence]) -> str:
@@ -331,6 +344,36 @@ def _live_action_pack(company: str, evidence: list[Evidence],
     )
 
 
+def _minimal_fallback_action_pack(company: str) -> ActionPack:
+    """Clean action pack for live mode when no real signals were found.
+
+    Uses only the company name — no fabricated claims about funding, G2 pain,
+    or competitor moves that have no evidence basis for this specific company.
+    """
+    return ActionPack(
+        urgency="Medium",
+        sales_angles=[
+            f"Live signals unavailable for {company} this run — verify timing manually before outreach.",
+        ],
+        cold_email=(
+            f"Subject: Quick thought on {company}\n\n"
+            f"Hi [Name],\n\n"
+            f"We've been tracking companies in your space and {company} stood out.\n\n"
+            f"Worth a quick call to see if there's a fit?\n\n"
+            f"— [Your Name]"
+        ),
+        linkedin_message=(
+            f"Hi — came across {company} while tracking the space. "
+            f"Happy to share patterns we're seeing across similar teams if useful."
+        ),
+        discovery_questions=[
+            f"What are the top GTM priorities for {company} this quarter?",
+            "Which vendors are you actively evaluating right now?",
+            "What evidence typically triggers vendor evaluations on your team?",
+        ],
+    )
+
+
 # ── In-memory cache for hero companies (demo-day speed) ─────────────────────
 # Live-mode /analyze takes ~15s per company. Cache by lowercase company name
 # with 30-min TTL so repeated demo runs return < 50ms.
@@ -390,14 +433,19 @@ def _fallback_response(company: str, reason: str = "Live analysis timed out") ->
     for c in base.competitors:
         c.mode = "fallback"
         c.threat = "low"
+    _scrub_profile_for_live(base)
+    for s in base.signals:
+        s.title = _strip_demo_label(s.title)
+        s.detail = _strip_demo_label(s.detail)
+    base.action_pack = _minimal_fallback_action_pack(company)
     base.executive_summary = (
         f"{company} analysis completed in fallback mode because live sources did not "
         "return fast enough. Use the Evidence Ledger as a structured starting point, "
         "then rerun when live web calls are available."
     )
     base.why_now_reason = (
-        f"{company} needs manual verification: live signals were unavailable during this run, "
-        "so outreach should wait for source confirmation."
+        f"{company} — live signals unavailable this run. "
+        "Manual research recommended before outreach."
     )
     base.infra = [
         InfraCall(tool="SERP API", purpose=reason, status="fallback", ms=0, evidence_count=0),
@@ -499,6 +547,9 @@ async def _build_response(company: str) -> AnalyzeResponse:
         for c in base.competitors:
             c.mode = "fallback"
             c.threat = "low"
+        for s in base.signals:
+            s.title = _strip_demo_label(s.title)
+            s.detail = _strip_demo_label(s.detail)
 
     # 4b. Web Unlocker chain — fetch top live article for full text extraction.
     #     Demonstrates tool chaining: SERP discovers URL → Unlocker bypasses paywall/JS.
@@ -625,12 +676,20 @@ async def _build_response(company: str) -> AnalyzeResponse:
 
     # 8. LLM synthesis overlay — cascade Claude → MiMo → none.
     #    Each provider returns None on missing key, rate limit, or failure.
+    #
+    #    Skip synthesis when we're in live mode but got zero usable data back.
+    #    Synthesizing on fallback mock evidence produces a polished but fully
+    #    fabricated narrative — worse than an honest "no live signals" message.
+    #    In pure mock mode (bd.is_live=False), synthesis is fine: judges see
+    #    the DEMO badge and understand it's illustrative.
     signals_dump = [s.model_dump() for s in base.signals]
     evidence_dump = [e.model_dump() for e in base.evidence]
 
+    _can_synthesize = not bd.is_live or has_any_live
+
     overlay: dict | None = None
     provider: str = "none"
-    if claude_configured():
+    if _can_synthesize and claude_configured():
         try:
             overlay = await asyncio.wait_for(
                 asyncio.to_thread(
@@ -645,7 +704,7 @@ async def _build_response(company: str) -> AnalyzeResponse:
             overlay = None
         if overlay:
             provider = "claude"
-    if overlay is None and mimo_configured():
+    if overlay is None and _can_synthesize and mimo_configured():
         try:
             overlay = await asyncio.wait_for(
                 asyncio.to_thread(
@@ -699,6 +758,22 @@ async def _build_response(company: str) -> AnalyzeResponse:
                 base.executive_summary = _live_exec_summary(company, base.evidence)
             if len(base.why_now_reason) < 40:
                 base.why_now_reason = _live_why_now(company, base.evidence)
+    elif bd.is_live:
+        # Live mode attempted but both SERP calls returned empty — very obscure
+        # company or no web presence. Scrub mock profile + build honest text so
+        # the FALLBACK badge appears alongside clean output, not wrong mock data.
+        _scrub_profile_for_live(base)
+        if not overlay_action_pack_applied:
+            base.action_pack = _minimal_fallback_action_pack(company)
+        base.executive_summary = (
+            f"{company} — live web signals were unavailable this run. "
+            "The Evidence Ledger shows fallback data. "
+            "Try re-running or verify the company name."
+        )
+        base.why_now_reason = (
+            f"No live signals found for {company}. "
+            "Manual research recommended before outreach."
+        )
 
     # 9. Final mode
     has_live_serp = serp_status == "ok" and bool(live_evidence)
