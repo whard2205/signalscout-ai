@@ -1,15 +1,22 @@
-# Deploy — Render (backend) + Vercel (frontend)
+# Deploy — Google Cloud Run (backend) + Vercel (frontend)
 
 Hackathon deadline: **2026-05-31**. Optimized for the 3-minute live demo.
 
-> **Railway fallback:** if Render billing/card verification blocks deployment,
+Current production setup:
+- Frontend: `https://signalscout-ai.vercel.app`
+- Backend: `https://signalscout-api-47232592262.asia-southeast2.run.app`
+
+Cloud Run is the primary backend target for the submitted demo. Render and
+Railway remain fallback options if you need to redeploy elsewhere.
+
+> **Railway fallback:** if Cloud Run access or billing blocks deployment,
 > use Railway for the backend. `railway.json` is committed at repo root and
 > runs:
 > - Build: `cd backend && pip install -r requirements.txt`
 > - Start: `cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT`
 > - Healthcheck: `/health`
 >
-> Railway variables are the same as Render:
+> Railway variables are the same as Cloud Run:
 > `BRIGHT_DATA_API_TOKEN`, `BRIGHT_DATA_SERP_ZONE=serp_api1`,
 > `BRIGHT_DATA_UNLOCKER_ZONE=web_unlocker1`,
 > `BRIGHT_DATA_SCRAPER_DATASET_ID`, `ANTHROPIC_API_KEY`,
@@ -23,9 +30,8 @@ Hackathon deadline: **2026-05-31**. Optimized for the 3-minute live demo.
 > After Railway deploy, generate a public domain and set Vercel
 > `NEXT_PUBLIC_API_BASE=https://<railway-domain>`.
 
-> **Google Cloud Run fallback:** if Render/Railway/Koyeb billing blocks you,
-> deploy the backend to Cloud Run. `backend/Dockerfile` is committed and listens
-> on Cloud Run's injected `$PORT`.
+> **Google Cloud Run quick redeploy:** `backend/Dockerfile` is committed and
+> listens on Cloud Run's injected `$PORT`.
 >
 > From Google Cloud Shell:
 > ```
@@ -56,7 +62,7 @@ Hackathon deadline: **2026-05-31**. Optimized for the 3-minute live demo.
 
 ## 0 · Prerequisites
 
-- Render account: <https://dashboard.render.com>
+- Google Cloud project with Cloud Run enabled
 - Vercel account: <https://vercel.com/dashboard>
 - A GitHub repo with this codebase pushed (the local git repo is set up;
   push to GitHub before continuing).

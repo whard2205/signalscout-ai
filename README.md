@@ -10,7 +10,7 @@
 ![Built for Bright Data Web Data UNLOCKED](https://img.shields.io/badge/Bright_Data-Web_Data_UNLOCKED_2026-7cf0c8?style=flat-square)
 ![Live Mode](https://img.shields.io/badge/mode-live-7cf0c8?style=flat-square)
 ![Deterministic Scoring](https://img.shields.io/badge/scoring-deterministic-78aaff?style=flat-square)
-![Tests](https://img.shields.io/badge/tests-209_passing-7cf0c8?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-214_passing-7cf0c8?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-78aaff?style=flat-square)
 
 > Every score is computable from a deterministic formula, every claim traces to a live web source, and live/mock/fallback status is visible per evidence row. **The LLM writes the narrative — it never picks the number.**
@@ -32,7 +32,7 @@ SignalScout is a deep research agent for GTM teams:
 4. Outputs an action pack: sales angles, cold email, LinkedIn message, discovery questions
 
 Every claim traces to a source URL, a Bright Data tool, and a confidence level.
-Every score is computable: `score = Σ weight(signal) × impact × confidence_boost × mode_multiplier`.
+Every score is computable: `score = baseline + Σ weight(signal) × impact × confidence_boost × mode_multiplier`.
 Live/mock/fallback status is visible per evidence row — no hidden black box.
 
 **Positioning: this is not another AI sales dashboard. It is an auditable GTM timing engine.**
@@ -229,7 +229,7 @@ would weaken the pitch.
 
 | Excluded | Why excluded |
 |---|---|
-| **No auth / login** | A timing engine has no per-user state. Statelessness is a feature: every `/analyze` returns the same hash for the same input — no session leak surface. |
+| **No auth / login** | A timing engine has no per-user state. Statelessness is a feature: the evidence hash is computed from evidence payload + score values, not user session state. |
 | **No vector DB / RAG** | Deterministic scoring relies on explicit weights, not learned embeddings. A vector layer would re-introduce the black-box behaviour we explicitly avoid. |
 | **No CRM integration** | The action pack is designed to be copy-paste into any CRM. Coupling to one vendor would tie the demo to that vendor's UX. |
 | **No fine-tuning** | The LLM only narrates. Fine-tuning a narrative model adds latency and cost without improving the auditable scoring layer. |
