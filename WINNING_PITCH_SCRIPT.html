@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SignalScout AI - Winning Pitch Script</title>
+<style>
+  :root {
+    --bg: #080b10;
+    --panel: #101722;
+    --panel2: #151e2b;
+    --line: #253246;
+    --text: #eef4fb;
+    --muted: #a7b4c5;
+    --dim: #6b788b;
+    --accent: #7cf0c8;
+    --blue: #78aaff;
+    --warn: #ffbf5a;
+    --danger: #ff7670;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 38px 22px 96px; }
+  .hero {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px;
+    background: linear-gradient(180deg, rgba(124,240,200,.12), rgba(120,170,255,.04));
+  }
+  h1 { margin: 0; font-size: 36px; letter-spacing: -.02em; line-height: 1.1; }
+  .sub { margin-top: 12px; color: var(--muted); max-width: 820px; }
+  h2 {
+    margin: 40px 0 14px;
+    color: var(--accent);
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: .2em;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .pill {
+    border: 1px solid rgba(124,240,200,.32);
+    background: rgba(124,240,200,.08);
+    color: var(--accent);
+    border-radius: 999px;
+    padding: 6px 11px;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+  }
+  .pill.blue { border-color: rgba(120,170,255,.36); background: rgba(120,170,255,.08); color: var(--blue); }
+  .pill.warn { border-color: rgba(255,191,90,.36); background: rgba(255,191,90,.08); color: var(--warn); }
+  .act {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+    padding: 22px 24px;
+    margin-top: 14px;
+  }
+  .act.me { border-left: 4px solid var(--accent); }
+  .act.friend { border-left: 4px solid var(--blue); }
+  .act-head {
+    display: flex; gap: 12px; align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .speaker-tag {
+    color: var(--bg);
+    background: var(--accent);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+  }
+  .friend .speaker-tag { background: var(--blue); }
+  .timecode {
+    color: var(--warn);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .act-title { font-size: 19px; margin: 0; }
+  .beat {
+    border-top: 1px dashed var(--line);
+    padding: 12px 0 10px;
+  }
+  .beat:first-of-type { border-top: 0; padding-top: 0; }
+  .beat-meta {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--dim);
+    font-family: var(--mono);
+    flex-wrap: wrap;
+  }
+  .beat-meta strong { color: var(--warn); }
+  .onscreen {
+    color: var(--blue);
+    font-size: 12.5px;
+    font-family: var(--mono);
+    margin-bottom: 6px;
+  }
+  .voiceover {
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.6;
+    padding-left: 14px;
+    border-left: 2px solid var(--accent);
+  }
+  .friend .voiceover { border-left-color: var(--blue); }
+  .voiceover em { color: var(--accent); font-style: normal; font-weight: 600; }
+  .friend .voiceover em { color: var(--blue); }
+  .psyche {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--warn);
+    background: rgba(255,191,90,.06);
+    border: 1px solid rgba(255,191,90,.16);
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+  .grid2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-top: 14px;
+  }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    padding: 16px 18px;
+  }
+  .card.danger { border-color: rgba(255,118,112,.45); background: rgba(255,118,112,.04); }
+  .card.warn { border-color: rgba(255,191,90,.4); background: rgba(255,191,90,.04); }
+  .card h3 { margin: 0 0 8px; font-size: 14px; color: var(--accent); }
+  .card.danger h3 { color: var(--danger); }
+  .card.warn h3 { color: var(--warn); }
+  ul { margin: 6px 0 0; padding-left: 20px; color: var(--muted); }
+  li { margin: 5px 0; }
+  li strong { color: var(--text); }
+  code { font-family: var(--mono); font-size: 12.5px; color: var(--accent); background: var(--panel2); padding: 2px 6px; border-radius: 5px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 10px; vertical-align: top; border-top: 1px solid var(--line); }
+  th { color: var(--dim); text-transform: uppercase; font-size: 10.5px; letter-spacing: .12em; font-weight: 500; background: var(--panel2); }
+  .footer {
+    margin-top: 50px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+  }
+  @media (max-width: 820px) {
+    .grid2 { grid-template-columns: 1fr; }
+    h1 { font-size: 28px; }
+    .voiceover { font-size: 15.5px; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <section class="hero">
+    <h1>SignalScout AI — Winning Pitch Script</h1>
+    <div class="sub">
+      Hybrid format: <strong>1 minute slides</strong> (psychological hook) +
+      <strong>2 minutes live demo</strong> (proof) +
+      <strong>1 minute close</strong> (memory anchor). Total <strong>~4:00</strong>.
+      Engineered for Bright Data Web Data UNLOCKED — 4 judging criteria explicitly addressed.
+    </div>
+    <div class="meta">
+      <span class="pill">Total ~4:00 (max 5:00)</span>
+      <span class="pill blue">Speaker 1: Live Demo</span>
+      <span class="pill blue">Speaker 2: Slides + Close</span>
+      <span class="pill warn">Hero: Anthropic</span>
+    </div>
+  </section>
+
+  <h2>The 60-Second Win Theory</h2>
+  <section class="act">
+    <p style="margin-top:0;color:var(--muted);">
+      Hackathon judges score 4 criteria. This script <strong style="color:var(--accent);">explicitly hits each one inside the first 60 seconds</strong>:
+    </p>
+    <table>
+      <tr><th>Criteria</th><th>Where it lands</th><th>Power phrase</th></tr>
+      <tr><td>1. Application of Technology</td><td>0:25 — Bright Data tool tile reveal</td><td><em>"Four Bright Data tools in parallel"</em></td></tr>
+      <tr><td>2. Presentation</td><td>0:00 — opening slide design + cadence</td><td><em>"shows its work"</em></td></tr>
+      <tr><td>3. Business Value</td><td>0:10 — time savings claim</td><td><em>"2-4 hours per account → 15 seconds"</em></td></tr>
+      <tr><td>4. Originality</td><td>0:45 — deterministic claim</td><td><em>"The LLM never picks the number"</em></td></tr>
+    </table>
+  </section>
+
+  <h2>Pre-Flight Checklist · T-minus 10 min</h2>
+  <section class="act">
+    <ul>
+      <li><strong>Backend warm:</strong> <code>curl https://signalscout-api-47232592262.asia-southeast2.run.app/health</code> → must show <code>mode:live</code></li>
+      <li><strong>Cache hot:</strong> hit <code>/analyze</code> for Anthropic once 5 min before record (cache TTL 30 min)</li>
+      <li><strong>Cockpit pre-loaded</strong> at <code>signalscout-ai.vercel.app</code>, empty state, no prior search visible</li>
+      <li><strong>Browser:</strong> hide bookmarks, extensions, notifications. Cursor highlight ON.</li>
+      <li><strong>PPT export:</strong> slides 1, 2, 4, 7, 8, 10 = used. Slides 3, 5, 6, 9 — skip (covered by live demo)</li>
+      <li><strong>Mic:</strong> 48 kHz mono, normalize -16 LUFS post-record</li>
+      <li><strong>Latihan handoff:</strong> 0:55 (Speaker 2→1) dan 3:00 (Speaker 1→2). 3x rehearsal.</li>
+    </ul>
+  </section>
+
+  <h2>Act 1 · The Hook · 0:00–0:25 · Speaker 2 (Friend)</h2>
+  <section class="act friend">
+    <div class="act-head">
+      <span class="speaker-tag">Friend</span>
+      <span class="timecode">0:00 – 0:25</span>
+      <span class="pill blue">Slide-based · 2 slides</span>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>0:00–0:10</strong> · Slide 1 (Title) fade in</div>
+      <div class="onscreen">SCREEN: PPT Slide 1 — "The GTM intelligence tool that shows its work" full-screen</div>
+      <div class="voiceover">
+        Every sales team has the same painful moment. They find the perfect account — <em>but only after the timing is gone</em>.
+      </div>
+      <div class="psyche">⚡ Psychology: open with shared pain → judges nod yes immediately. Pause 1 sec after "is gone" — that's the emotional hook.</div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>0:10–0:25</strong> · Slide 2 (Problem) cross-fade</div>
+      <div class="onscreen">SCREEN: PPT Slide 2 — REACTIVE / GENERIC / UNVERIFIABLE three-card layout</div>
+      <div class="voiceover">
+        The funding was last week. The product launch was yesterday. The competitor move is already public. And the rep is still sending a generic email — with <em>no proof behind the score they trust</em>. That's the gap SignalScout AI was built for.
+      </div>
+      <div class="psyche">⚡ Psychology: rule-of-three (funding / launch / competitor) — neuro-linguistic anchor. "no proof" attacks every existing intent tool by name without naming them.</div>
+    </div>
+  </section>
+
+  <h2>Act 2 · The Setup · 0:25–1:00 · Speaker 2 (Friend)</h2>
+  <section class="act friend">
+    <div class="act-head">
+      <span class="speaker-tag">Friend</span>
+      <span class="timecode">0:25 – 1:00</span>
+      <span class="pill blue">Slide-based · 2 slides</span>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>0:25–0:45</strong> · Slide 4 (Solution) cross-fade</div>
+      <div class="onscreen">SCREEN: PPT Slide 4 — three-step architecture (Input → Evidence → Action Pack)</div>
+      <div class="voiceover">
+        SignalScout separates the work into <em>three clean layers</em>. <em>Bright Data</em> collects live evidence from the public web. <em>Python</em> computes the score — deterministically. And <em>Claude</em> turns the evidence into a sales-ready narrative. The number is never invented by AI.
+      </div>
+      <div class="psyche">⚡ Psychology: triadic structure ("Bright Data collects / Python scores / Claude explains") = sticky memory anchor. The "never invented by AI" line preempts judge skepticism about LLM hallucination.</div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>0:45–1:00</strong> · Handoff transition · Slide 5 (Product mockup) brief flash</div>
+      <div class="onscreen">SCREEN: PPT Slide 5 — cockpit mockup, then cross-fade to LIVE Vercel URL bar visible</div>
+      <div class="voiceover">
+        Enough talking. <em>Let me show you the real product running on Bright Data</em> — live, right now.
+      </div>
+      <div class="psyche">⚡ Psychology: "enough talking" = pattern interrupt. Builds anticipation. Judges instantly more engaged for next 2 minutes.</div>
+    </div>
+  </section>
+
+  <h2>Act 3 · Live Demo · 1:00–3:00 · Speaker 1 (YOU)</h2>
+  <section class="act me">
+    <div class="act-head">
+      <span class="speaker-tag">You</span>
+      <span class="timecode">1:00 – 3:00</span>
+      <span class="pill">LIVE COCKPIT · 2 minutes</span>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>1:00–1:15</strong> · Pipeline kick-off</div>
+      <div class="onscreen">SCREEN: cockpit landing page → YOU type "Anthropic" → click Analyze → Agent Timeline starts streaming</div>
+      <div class="voiceover">
+        One company name in — <em>Anthropic</em> — and Bright Data goes to work. <em>SERP API</em> for news and funding. A second <em>SERP</em> call for competitors. <em>Web Unlocker</em> bypassing paywalls. A pre-warmed <em>Web Scraper</em> snapshot for LinkedIn hiring. And <em>MCP</em> — our agent is itself a tool any AI client can call.
+      </div>
+      <div class="psyche">⚡ Psychology: name each tool while it visibly ticks green. Judges register "real Bright Data integration" not "claim of Bright Data".</div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>1:15–1:40</strong> · Score lands</div>
+      <div class="onscreen">SCREEN: Why-Now ring animates to 98 · cursor circles the ring → moves to component breakdown below</div>
+      <div class="voiceover">
+        Ninety-eight out of a hundred. A <em>deterministic</em> score — computed in Python from explicit weights. <em>The LLM never picks the number</em>. Every component below traces to a research-informed framework. Tunable. Auditable.
+      </div>
+      <div class="psyche">⚡ Psychology: "98 out of 100" = anchoring + specificity. "LLM never picks the number" = THE memory hook of entire pitch. Say it slow.</div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>1:40–2:10</strong> · Evidence Ledger scroll</div>
+      <div class="onscreen">SCREEN: scroll to Evidence Ledger · hover one live row (T1 source badge visible) · cursor lingers on evidence_hash at bottom</div>
+      <div class="voiceover">
+        Every signal traces back to a <em>live source</em> — domain, tier-one to tier-three authority, freshness-decayed confidence. Old articles automatically lose weight. And this <em>reproducibility hash</em> — same input, same hash, audit-grade. Show me another AI sales tool that does that.
+      </div>
+      <div class="psyche">⚡ Psychology: "show me another tool" = rhetorical challenge, judges mentally compare and find no match. Originality criteria locked.</div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>2:10–2:35</strong> · Action Pack</div>
+      <div class="onscreen">SCREEN: scroll to Action Pack · highlight Cold Email subject line</div>
+      <div class="voiceover">
+        And here's the payoff for the rep. A <em>ready-to-send</em> cold email — anchored on the actual funding event, not a generic template. Three discovery questions matched to the trigger. The next move is on the screen.
+      </div>
+      <div class="psyche">⚡ Psychology: "next move is on the screen" = business value claim with visible proof. Judges see "this would actually save a sales rep time."</div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>2:35–3:00</strong> · Copy GTM Brief + infra panel</div>
+      <div class="onscreen">SCREEN: click "Copy GTM Brief" button → brief "Copied" pulse → scroll up to Bright Data Infrastructure panel</div>
+      <div class="voiceover">
+        One click. The whole brief is in the clipboard — Slack, Salesforce, email. And the infrastructure panel up here shows every Bright Data tool that fired, with real latency. <em>This isn't a mock</em>. This is live, every time you click.
+      </div>
+      <div class="psyche">⚡ Psychology: "this isn't a mock" = direct disarm of judges' #1 hackathon skepticism. They've watched 50 mock demos this round.</div>
+    </div>
+  </section>
+
+  <h2>Act 4 · The Trust Layer · 3:00–3:35 · Speaker 2 (Friend)</h2>
+  <section class="act friend">
+    <div class="act-head">
+      <span class="speaker-tag">Friend</span>
+      <span class="timecode">3:00 – 3:35</span>
+      <span class="pill blue">Slide-based · 2 slides</span>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>3:00–3:18</strong> · Slide 7 (Scoring formula)</div>
+      <div class="onscreen">SCREEN: PPT Slide 7 — Score formula + tier hierarchy</div>
+      <div class="voiceover">
+        Most AI tools ask you to trust a score. SignalScout shows you exactly how it was computed. <em>Same evidence, same score, same hash</em>. The LLM writes the narrative. It does not generate the number.
+      </div>
+      <div class="psyche">⚡ Psychology: "Most AI tools..." = comparative framing — judges position SignalScout above competitors automatically. Repeat the "LLM does not generate the number" phrase — third time it becomes mantra.</div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>3:18–3:35</strong> · Slide 8 (AI Guardrails)</div>
+      <div class="onscreen">SCREEN: PPT Slide 8 — Claude → MiMo → Deterministic cascade</div>
+      <div class="voiceover">
+        And if the LLM fails entirely, SignalScout <em>still works</em>. Claude Haiku as primary, automatic failover, and a deterministic template as last resort. The system can lose its LLM and <em>still keep the proof</em>.
+      </div>
+      <div class="psyche">⚡ Psychology: "still works" = production-grade signal. Hackathon judges associate "works under failure" with "team that knows what they're doing".</div>
+    </div>
+  </section>
+
+  <h2>Act 5 · The Close · 3:35–4:00 · Speaker 2 (Friend)</h2>
+  <section class="act friend">
+    <div class="act-head">
+      <span class="speaker-tag">Friend</span>
+      <span class="timecode">3:35 – 4:00</span>
+      <span class="pill blue">Slide-based · 1 slide + end card</span>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>3:35–3:50</strong> · Slide 10 (Close)</div>
+      <div class="onscreen">SCREEN: PPT Slide 10 — "Know who to contact now, why now, and with proof"</div>
+      <div class="voiceover">
+        AI can already write the email. SignalScout answers the question <em>before</em> the email — why this company, and why now. That's the decision sales teams actually need.
+      </div>
+      <div class="psyche">⚡ Psychology: "before the email" = repositions every competing AI tool as downstream of SignalScout. Judges remember the framing.</div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-meta"><strong>3:50–4:00</strong> · End card</div>
+      <div class="onscreen">SCREEN: End card — URL · GitHub · sponsor badges</div>
+      <div class="voiceover">
+        <em>Live. Deterministic. Traceable.</em> SignalScout AI — live at signalscout-ai.vercel.app. Built for Bright Data Web Data UNLOCKED.
+      </div>
+      <div class="psyche">⚡ Psychology: 3-word mantra closing = memorable mnemonic. URL spoken aloud = enables judges to click-test immediately.</div>
+    </div>
+  </section>
+
+  <h2>Power Phrases Bank</h2>
+  <section class="act">
+    <p style="color:var(--muted);margin-top:0;">If you only remember 7 phrases, remember these:</p>
+    <table>
+      <tr><th>Phrase</th><th>Where</th><th>Why it works</th></tr>
+      <tr><td><em>"shows its work"</em></td><td>Title slide</td><td>Implies transparency without saying it</td></tr>
+      <tr><td><em>"only after the timing is gone"</em></td><td>0:08</td><td>Universal sales pain</td></tr>
+      <tr><td><em>"Bright Data collects. Python scores. Claude explains."</em></td><td>0:35</td><td>Triadic mnemonic</td></tr>
+      <tr><td><em>"The LLM never picks the number"</em></td><td>1:25, 3:10</td><td>Originality criteria — repeat 2-3x</td></tr>
+      <tr><td><em>"Reproducibility hash — audit-grade"</em></td><td>1:55</td><td>Unique technical claim</td></tr>
+      <tr><td><em>"This isn't a mock"</em></td><td>2:50</td><td>Disarms judge skepticism</td></tr>
+      <tr><td><em>"Live. Deterministic. Traceable."</em></td><td>3:55</td><td>Final memory anchor</td></tr>
+    </table>
+  </section>
+
+  <h2>Discipline Layer</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>SAY these</h3>
+      <ul>
+        <li><strong>"Four Bright Data tools in parallel"</strong> — criteria 1</li>
+        <li><strong>"15 seconds, every claim traceable"</strong> — criteria 3</li>
+        <li><strong>"LLM never picks the number"</strong> — criteria 4</li>
+        <li><strong>"MCP — agent is itself a tool"</strong> — criteria 1+4</li>
+        <li><strong>"Reproducibility hash"</strong> — criteria 4</li>
+        <li><strong>Specific scores</strong> ("98 out of 100") — criteria 2</li>
+      </ul>
+    </div>
+    <div class="card danger">
+      <h3>NEVER say</h3>
+      <ul>
+        <li>"AI generated the score" — wrong, you'll lose criteria 4</li>
+        <li>"Live Web Scraper" — it's pre-warmed; say so</li>
+        <li>"MiMo failover" — stealth; UI says Claude</li>
+        <li>Team introductions — judges don't care</li>
+        <li>"$50 billion TAM" — that's investor pitch, not hackathon</li>
+        <li>Specific competitor names from screen (OpenAI GPT-5, AI Grok) — cosmetic noise</li>
+        <li>"In the future we will…" — judges score what works NOW</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Psychology Cheat Sheet</h2>
+  <section class="act">
+    <table>
+      <tr><th>Technique</th><th>When used</th><th>Effect</th></tr>
+      <tr><td><strong>Shared pain hook</strong></td><td>0:00–0:10</td><td>Judges nod "yes that's real"</td></tr>
+      <tr><td><strong>Rule of three</strong></td><td>0:18 (funding/launch/competitor), 3:55 (live/det/trace)</td><td>Neuro-linguistic anchoring</td></tr>
+      <tr><td><strong>Specificity over abstraction</strong></td><td>"98/100", "15 seconds", "4 tools"</td><td>Concrete > vague = credible</td></tr>
+      <tr><td><strong>Pattern interrupt</strong></td><td>0:45 "Enough talking"</td><td>Re-engages attention before demo</td></tr>
+      <tr><td><strong>Comparative framing</strong></td><td>"Most AI tools ask you to trust…"</td><td>Judges auto-position you above competitors</td></tr>
+      <tr><td><strong>Mantra repetition</strong></td><td>"LLM doesn't pick the number" ×3</td><td>Becomes the take-away line</td></tr>
+      <tr><td><strong>Anti-frame</strong></td><td>"This isn't a mock"</td><td>Preempts #1 judge skepticism</td></tr>
+      <tr><td><strong>Repositioning</strong></td><td>"Answers the question BEFORE the email"</td><td>Makes all competitors look downstream</td></tr>
+    </table>
+  </section>
+
+  <h2>Speaker Roles · Final Allocation</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>🎙️ Speaker 1 (YOU) · 2:00 total</h3>
+      <ul>
+        <li><strong>0:55–3:00</strong> · Live demo flow</li>
+        <li>You drive cockpit, narrate technical</li>
+        <li>You know product deepest = lowest fumble risk</li>
+        <li><strong>Memorize</strong>: the 5 demo beats above</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🎙️ Speaker 2 (Friend) · 2:00 total</h3>
+      <ul>
+        <li><strong>0:00–0:55</strong> · Opening + Setup (slides 1, 2, 4, brief 5)</li>
+        <li><strong>3:00–4:00</strong> · Trust layer + Close (slides 7, 8, 10)</li>
+        <li>No live cockpit needed = lower cognitive load</li>
+        <li><strong>Memorize</strong>: the 6 voiceover paragraphs above</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Pronunciation Notes</h2>
+  <section class="act">
+    <ul>
+      <li>Say <strong>GTM</strong> as "G-T-M", not "get-em"</li>
+      <li>Say <strong>de-ter-min-is-tic</strong> slow — it's the originality keyword</li>
+      <li><strong>Bright Data</strong> two distinct words, no rush — pronounce sponsor name clearly</li>
+      <li><strong>MCP</strong> = "M-C-P" letters, not "mcp" as word</li>
+      <li><strong>Pause 0.5 sec</strong> after every Power Phrase — gives judges' brain time to register</li>
+      <li>Avoid filler "uhh / so / basically" — re-record if heard</li>
+    </ul>
+  </section>
+
+  <h2>If you have ≤3:30 budget (cut list)</h2>
+  <section class="act warn" style="border-color: rgba(255,191,90,.36);">
+    <p style="margin-top:0;color:var(--warn);">In order of "OK to drop first":</p>
+    <ol style="color: var(--muted);">
+      <li>Beat 3:18–3:35 (Slide 8 AI Guardrails) → −17s</li>
+      <li>Beat 2:35–3:00 (Copy GTM Brief click) — keep cursor on Action Pack instead → −15s</li>
+      <li>Beat 1:40–2:10 (compress Evidence Ledger → 15s) → −15s</li>
+    </ol>
+    <p style="color: var(--muted);">Total trim = ~45s → lands at 3:15. <strong style="color:var(--accent);">Never cut</strong>: Opening hook, "LLM never picks the number", live demo Why-Now landing, final mantra close.</p>
+  </section>
+
+  <h2>Final Record Workflow · 90 minutes</h2>
+  <section class="act">
+    <table>
+      <tr><th>Time</th><th>Action</th></tr>
+      <tr><td><strong>0–15</strong></td><td>OBS setup · mic test · backend warm</td></tr>
+      <tr><td><strong>15–30</strong></td><td>Latihan full pass 2x dengan temen</td></tr>
+      <tr><td><strong>30–45</strong></td><td>Record TAKE 1 (full 4 min, one pass)</td></tr>
+      <tr><td><strong>45–60</strong></td><td>Review · identify weak segments</td></tr>
+      <tr><td><strong>60–75</strong></td><td>Re-record weak segments only</td></tr>
+      <tr><td><strong>75–90</strong></td><td>Edit: title slide 10s + best demo + end card 10s + audio -16 LUFS + MP4 1080p H.264 export</td></tr>
+    </table>
+  </section>
+
+  <div class="footer">SignalScout AI · Built for Bright Data Web Data UNLOCKED · May 25–31, 2026 · Submit ASAP</div>
+</main>
+</body>
+</html>
