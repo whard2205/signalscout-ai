@@ -357,6 +357,23 @@ _NOT_COMPANY_HARD = frozenset({
     "claude code", "claude desktop", "claude pro",
     "gemini advanced", "gemini pro", "gemini ultra",
     "copilot pro", "copilot enterprise",
+    # Business-analysis framework names — these appear in SERP articles
+    # ABOUT a company ("PESTEL analysis of Telkomsel") and the parser
+    # mis-extracts the framework name as a competitor. None of these are
+    # companies; they're MBA frameworks / consulting models.
+    "pestel-analysis", "pestel analysis", "pestleanalysis", "pestle analysis",
+    "portersfiveforce", "porters five force", "porter's five forces",
+    "porter five forces", "swot analysis", "swot-analysis",
+    "matrixbcg", "bcg matrix", "bcg-matrix", "growth-share matrix",
+    "value chain analysis", "ansoff matrix",
+    # Research / academic platforms that get name-extracted from "cited on X"
+    "researchgate", "research-gate", "academia.edu", "scholar",
+    "tabinsights", "tab insights", "ibisworld", "ibis-world",
+    "statista", "datanyze", "owler",
+    # Indonesian BUMN/PT suffix that gets stripped and becomes "Persero"
+    # ("PT Pertamina (Persero)" → "Persero" via parser). Persero is the
+    # state-enterprise legal suffix, not a company name.
+    "persero", "tbk", "perseroan",
 })
 
 
