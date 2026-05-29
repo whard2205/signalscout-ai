@@ -1,8 +1,19 @@
 # SignalScout AI
 
-**Evidence-First Why-Now Engine**
+**Evidence-First Why-Now Engine** &nbsp; · &nbsp; *The GTM intelligence tool that shows its work.*
 
-> One-line pitch: The GTM intelligence tool that shows its work — every score is computable from a deterministic formula, every claim traces to a live web source, and live/mock/fallback status is visible per evidence row.
+[**▶ Try the live demo →**](https://signalscout-ai.vercel.app) &nbsp; · &nbsp;
+[Backend API](https://signalscout-api-47232592262.asia-southeast2.run.app/health) &nbsp; · &nbsp;
+[Scoring methodology](./METHODOLOGY.md) &nbsp; · &nbsp;
+[Deploy guide](./DEPLOY.md)
+
+![Built for Bright Data Web Data UNLOCKED](https://img.shields.io/badge/Bright_Data-Web_Data_UNLOCKED_2026-7cf0c8?style=flat-square)
+![Live Mode](https://img.shields.io/badge/mode-live-7cf0c8?style=flat-square)
+![Deterministic Scoring](https://img.shields.io/badge/scoring-deterministic-78aaff?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-209_passing-7cf0c8?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-78aaff?style=flat-square)
+
+> Every score is computable from a deterministic formula, every claim traces to a live web source, and live/mock/fallback status is visible per evidence row. **The LLM writes the narrative — it never picks the number.**
 
 ---
 
@@ -209,14 +220,21 @@ If mode is `demo`, all summaries are labeled `[DEMO]` so judges can tell.
 - SERP signal classification uses keyword matching, not NLP. Works well in
   practice for the eight signal kinds we support.
 
-## What is intentionally not built
+## Scope discipline — what we did NOT build, on purpose
 
-- No auth / login
-- No vector DB / RAG
-- No CRM integration
-- No fine-tuning
-- No multi-agent swarm
-- No microservices
+Each exclusion below is a deliberate scope choice that strengthens the
+core positioning of *deterministic, evidence-first GTM timing*. None of
+these were dropped for time; each was excluded because including it
+would weaken the pitch.
+
+| Excluded | Why excluded |
+|---|---|
+| **No auth / login** | A timing engine has no per-user state. Statelessness is a feature: every `/analyze` returns the same hash for the same input — no session leak surface. |
+| **No vector DB / RAG** | Deterministic scoring relies on explicit weights, not learned embeddings. A vector layer would re-introduce the black-box behaviour we explicitly avoid. |
+| **No CRM integration** | The action pack is designed to be copy-paste into any CRM. Coupling to one vendor would tie the demo to that vendor's UX. |
+| **No fine-tuning** | The LLM only narrates. Fine-tuning a narrative model adds latency and cost without improving the auditable scoring layer. |
+| **No multi-agent swarm** | The pipeline IS the agent system — five tool calls in parallel, deterministic scoring, single LLM synthesis. Adding an "orchestrator agent" on top would obscure the data flow. |
+| **No microservices** | One FastAPI process, one Next.js app. Operational simplicity supports the demo-day promise: same code path runs locally, on Cloud Run, and on Railway. |
 
 **One killer workflow done well > five workflows half-shipped.**
 
@@ -320,6 +338,14 @@ ZoomInfo do for enterprise accounts).
 - **Render** — connect repo, set root `backend/`, build `pip install -r requirements.txt`, start `uvicorn main:app --host 0.0.0.0 --port $PORT`
 
 See [DEPLOY.md](DEPLOY.md) §"Railway fallback" and §"Google Cloud Run fallback" for full instructions.
+
+---
+
+### Additional documentation
+
+- [METHODOLOGY.md](./METHODOLOGY.md) — full scoring formula, weight tables, framework citations
+- [DEPLOY.md](./DEPLOY.md) — Cloud Run, Railway, and Render deploy paths
+- [docs/](./docs/) — pitch scripts, video guide, supplementary design notes
 
 ---
 

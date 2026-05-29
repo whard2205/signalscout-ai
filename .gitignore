@@ -44,3 +44,10 @@ Thumbs.db
 .claude/settings.local.json
 
 .vercel
+
+# ── Internal developer notes (never public) ────────────────────────────────
+CLAUDE.md
+FRIEND_PITCH_CHEATSHEET.html
+SPLIT_PITCH_SCRIPT.html
+DEMO_FIRST_3MIN_SCRIPT.html
+
